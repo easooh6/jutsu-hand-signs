@@ -1,0 +1,65 @@
+.camera {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.world,
+.overheadWorld {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max-content;
+  height: max-content;
+  transform-origin: 0 0;
+  transition-property: transform;
+  transition-timing-function: linear;
+  will-change: transform;
+  image-rendering: pixelated;
+}
+
+.overheadWorld {
+  z-index: 15;
+  pointer-events: none;
+}
+
+.subject {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.subjectContent {
+  width: 80px;
+  height: 110px;
+  transform-origin: 0 0;
+}
+
+.vision {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgb(0 0 0 / 0.2) 0,
+      rgb(0 0 0 / 0.2) 120px,
+      rgb(0 0 0 / 0.32) 180px,
+      rgb(0 0 0 / 0.65) 260px,
+      rgb(0 0 0 / 0.9) 350px,
+      #000 440px
+    );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world,
+  .overheadWorld {
+    transition: none;
+  }
+}

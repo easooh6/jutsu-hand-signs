@@ -1,0 +1,77 @@
+import type { SpellDefinition } from "./types";
+
+export const SPELLS: SpellDefinition[] = [
+  {
+    id: "hurting",
+    name: "HURTING",
+    description:
+      "A mass of pain gathers at a single point before bursting outward in a bloody pulse.",
+    spriteSrc: "/spells/hurting.png",
+    iconFrame: 5,
+    columns: 5,
+    rows: 4,
+    phases: [
+      { row: 0, frames: 5 },
+      { row: 1, frames: 5 },
+      { row: 2, frames: 5 },
+      { row: 3, frames: 3 },
+    ],
+    frameDuration: 90,
+    showDetails: true,
+  },
+  {
+    id: "fire-ball",
+    name: "FIRE BALL",
+    description:
+      "A spark erupts into a violent fireball, then scatters into burning fragments.",
+    spriteSrc: "/spells/fire-ball.png",
+    iconFrame: 5,
+    columns: 5,
+    rows: 6,
+    phases: [
+      { row: 0, frames: 5 },
+      { row: 1, frames: 5 },
+      { row: 2, frames: 5 },
+      { row: 3, frames: 5 },
+      { row: 4, frames: 5 },
+      { row: 5, frames: 5 },
+    ],
+    frameDuration: 80,
+    showDetails: true,
+  },
+  {
+    id: "torrent",
+    name: "TORRENT",
+    description:
+      "A violent current tears forward before breaking apart into cold spray.",
+    spriteSrc: "/spells/torrent.png",
+    iconFrame: 6,
+    columns: 5,
+    rows: 4,
+    phases: [
+      { row: 0, frames: 5 },
+      { row: 1, frames: 5 },
+      { row: 2, frames: 2 },
+    ],
+    frameDuration: 90,
+    showDetails: true,
+  },
+  {
+    id: "solace",
+    name: "SOLACE",
+    description:
+      "A soft Sylvian whisper restores wounded flesh and returns lost vitality.",
+    spriteSrc: "/spells/solace.png",
+    iconFrame: "last",
+    columns: 5,
+    rows: 4,
+    phases: [
+      { row: 0, frames: 5 },
+      { row: 1, frames: 5 },
+      { row: 2, frames: 5 },
+      { row: 3, frames: 1 },
+    ],
+    frameDuration: 95,
+    showDetails: true,
+  },
+];

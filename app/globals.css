@@ -1,0 +1,117 @@
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap");
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --background: #050506;
+  --foreground: #e8e2c8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--background);
+}
+
+body {
+  color: var(--foreground);
+  font-family: "Pixelify Sans", monospace;
+  user-select: none;
+}
+
+.dungeon {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #030304;
+}
+
+.dungeon__backdrop {
+  position: absolute;
+  inset: -1.5rem;
+  z-index: -3;
+  background-image: url("/bg/floor1.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: brightness(0.68) contrast(1.18) saturate(0.72);
+  transform: scale(1.025);
+  animation: dungeon-breathe 12s ease-in-out infinite alternate;
+}
+
+.dungeon__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 0.7) 0%, transparent 27%, transparent 58%, rgb(0 0 0 / 0.74) 100%),
+    radial-gradient(circle at 50% 42%, transparent 18%, rgb(0 0 0 / 0.18) 48%, rgb(0 0 0 / 0.74) 100%);
+}
+
+.dungeon__header {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: clamp(1.5rem, 6vh, 4.5rem) 1.25rem 0;
+}
+
+.dungeon__title {
+  max-width: 18ch;
+  margin: 0;
+  color: #e6dfc4;
+  font-size: clamp(2.25rem, 6.5vw, 6.75rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: 0.045em;
+  text-align: center;
+  text-wrap: balance;
+  text-shadow:
+    0 3px 0 #17151b,
+    0 6px 0 rgb(0 0 0 / 0.55),
+    0 0 24px rgb(212 202 161 / 0.14);
+  animation: title-arrival 900ms steps(6, end) both;
+}
+
+@keyframes title-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(-0.65rem);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes dungeon-breathe {
+  from { transform: scale(1.025); }
+  to { transform: scale(1.045); }
+}
+
+@media (max-width: 640px) {
+  .dungeon__backdrop {
+    background-size: auto 100%;
+  }
+
+  .dungeon__title {
+    max-width: 12ch;
+    line-height: 0.95;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dungeon__backdrop,
+  .dungeon__title {
+    animation: none;
+  }
+}

@@ -1,0 +1,32 @@
+.map {
+  position: relative;
+  display: grid;
+  width: max-content;
+  overflow: hidden;
+  background: #000;
+  image-rendering: pixelated;
+}
+
+.cell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tile {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.object {
+  z-index: 1;
+}
+
+.overheadMap {
+  background: transparent;
+  pointer-events: none;
+}

@@ -1,0 +1,21 @@
+.backButton {
+  position: absolute;
+  left: clamp(1rem, 4vw, 3rem);
+  top: clamp(1.5rem, 4vh, 2.5rem);
+  z-index: 60;
+  color: #a69f87;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+.backButton:hover,
+.backButton:focus-visible {
+  color: #fff4c9;
+  text-shadow: 0 0 10px rgb(255 244 201 / 0.28);
+}
+
+.backButton:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 5px;
+}

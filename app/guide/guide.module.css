@@ -1,0 +1,68 @@
+.guide {
+  position: relative;
+  min-height: 100svh;
+  overflow-x: hidden;
+  isolation: isolate;
+  background: #050506;
+}
+
+.backdrop {
+  position: fixed;
+  inset: -1rem;
+  z-index: -3;
+  background: url("/bg/floor1.png") center / cover no-repeat;
+  filter: brightness(0.2) contrast(1.25) saturate(0.45) blur(2px);
+  transform: scale(1.03);
+}
+
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 50% 50%, rgb(46 39 43 / 0.28), transparent 44%),
+    linear-gradient(180deg, rgb(0 0 0 / 0.72), transparent 26%, rgb(0 0 0 / 0.64));
+}
+
+.header {
+  position: relative;
+  display: flex;
+  min-height: 8rem;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem clamp(1rem, 4vw, 3rem);
+}
+
+.header h1 {
+  margin: 0;
+  color: #e6dfc4;
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-shadow: 0 4px 0 #050506;
+}
+
+.spellGrid {
+  display: flex;
+  min-height: calc(100svh - 8rem);
+  flex-wrap: wrap;
+  align-content: flex-end;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(1.75rem, 5vw, 4rem);
+  padding: 12rem clamp(1rem, 5vw, 4rem) clamp(2.5rem, 7vh, 5rem);
+}
+
+@media (max-width: 640px) {
+  .header {
+    min-height: 9rem;
+    align-items: flex-start;
+    padding-top: 1.5rem;
+  }
+
+  .spellGrid {
+    min-height: calc(100svh - 9rem);
+    padding: 10rem 1rem 2.5rem;
+  }
+}

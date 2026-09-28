@@ -1,0 +1,143 @@
+.spell {
+  position: relative;
+  display: grid;
+  width: 10rem;
+  justify-items: center;
+  isolation: isolate;
+}
+
+.slotButton {
+  width: 9rem;
+  height: 9rem;
+  border: 0;
+  padding: 0.5rem;
+  background: #d6cda9;
+  clip-path: polygon(
+    24px 0,
+    calc(100% - 24px) 0,
+    calc(100% - 24px) 8px,
+    calc(100% - 8px) 8px,
+    calc(100% - 8px) 24px,
+    100% 24px,
+    100% calc(100% - 24px),
+    calc(100% - 8px) calc(100% - 24px),
+    calc(100% - 8px) calc(100% - 8px),
+    calc(100% - 24px) calc(100% - 8px),
+    calc(100% - 24px) 100%,
+    24px 100%,
+    24px calc(100% - 8px),
+    8px calc(100% - 8px),
+    8px calc(100% - 24px),
+    0 calc(100% - 24px),
+    0 24px,
+    8px 24px,
+    8px 8px,
+    24px 8px
+  );
+  cursor: default;
+  filter: drop-shadow(7px 7px 0 rgb(0 0 0 / 0.72));
+  transition:
+    transform 140ms steps(3, end),
+    filter 140ms steps(3, end);
+}
+
+.slotFrame {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  overflow: hidden;
+  background: #111014;
+  clip-path: inherit;
+  image-rendering: pixelated;
+  box-shadow:
+    inset 0 0 0 4px #4a4645,
+    inset 0 0 0 8px #0b0a0c;
+}
+
+.sprite {
+  display: block;
+  width: 4rem;
+  height: 4rem;
+  background-image: var(--sprite-image);
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  transform: scale(2);
+  transform-origin: center;
+}
+
+.card {
+  position: absolute;
+  bottom: calc(100% + 3rem);
+  left: 50%;
+  z-index: -1;
+  width: min(22rem, calc(100vw - 2rem));
+  min-height: 8.5rem;
+  padding: 1.25rem 1.4rem 1.35rem;
+  background: rgb(9 8 11 / 0.96);
+  color: #ded6b7;
+  clip-path: polygon(
+    6px 0,
+    calc(100% - 6px) 0,
+    calc(100% - 6px) 3px,
+    100% 3px,
+    100% calc(100% - 6px),
+    calc(100% - 3px) calc(100% - 6px),
+    calc(100% - 3px) 100%,
+    6px 100%,
+    6px calc(100% - 3px),
+    0 calc(100% - 3px),
+    0 6px,
+    3px 6px,
+    3px 3px,
+    6px 3px
+  );
+  box-shadow: inset 0 0 0 3px #736c58;
+  opacity: 0;
+  transform: translate(-50%, 0.75rem);
+  transition:
+    opacity 100ms steps(2, end),
+    transform 140ms steps(3, end);
+  pointer-events: none;
+}
+
+.card h2 {
+  margin: 0 0 0.7rem;
+  color: #f0e8c8;
+  font-size: 2.2rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.card p {
+  margin: 0;
+  color: #aaa38d;
+  font-size: 1.95rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.active {
+  z-index: 3;
+}
+
+.active .slotButton {
+  transform: scale(1.14) translateY(-0.35rem);
+  filter:
+    drop-shadow(9px 9px 0 rgb(0 0 0 / 0.78))
+    drop-shadow(0 0 12px rgb(201 58 27 / 0.36));
+}
+
+.active .card {
+  z-index: 2;
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slotButton,
+  .card {
+    transition: none;
+  }
+}

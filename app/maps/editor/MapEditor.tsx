@@ -1,9 +1,33 @@
 "use client";
 
-import type { CSSProperties, PointerEvent } from "react";
+import type {
+  CSSProperties,
+  PointerEvent,
+} from "react";
 import { useEffect, useRef, useState } from "react";
 import { BackButton } from "@/components/navigation";
 import entranceData from "../data/entrance.json";
+import eventDatabaseData from "../data/events.json";
+import {
+  createMapJson,
+  readMapProject,
+  saveEventDatabaseJson,
+  saveMapJson,
+} from "../data/client";
+import type { MapFileDocument } from "../data/client";
+import {
+  addEventScript,
+  connectTransitScript,
+  createEventEntity,
+  removeEventEntity,
+  removeEventScript,
+} from "../events";
+import type {
+  EventDatabase,
+  EventEntity,
+  EventScript,
+} from "../events";
+import { EventEntityModal } from "./EventEntityModal";
 import { TilePalette, tilePreviewStyle } from "./TilePalette";
 import type {
   EditorBrush,
@@ -14,19 +38,14 @@ import type {
 } from "./types";
 import styles from "./editor.module.css";
 
-const STORAGE_KEY = "zjd-map-editor-maps";
-
-type MapDocument = {
-  id: string;
-  map: EditorMap;
-  name: string;
-};
+type MapDocument = Omit<MapFileDocument, "map"> & { map: EditorMap };
 
 const ENTRANCE_DOCUMENT: MapDocument = {
   id: "entrance",
   map: entranceData as EditorMap,
   name: "entrance",
 };
+const BASE_EVENT_DATABASE = eventDatabaseData as EventDatabase;
 
 function grid<T>(width: number, height: number, value: () => T): T[][] {
   return Array.from({ length: height }, () =>
@@ -112,8 +131,9 @@ function CellTile({ tile }: { tile: EditorTile | null }) {
 }
 
 function EventMarker({ events }: { events: readonly EditorEvent[] }) {
-  if (!events.some((event) => event.type === "player-spawn")) return null;
-  return <span className={styles.eventMarker}>P</span>;
+  if (events.length === 0) return null;
+  const labels = events.map((event) => event.eventId);
+  return <span className={styles.eventMarker}>{labels.join("/")}</span>;
 }
 
 export function MapEditor() {
@@ -129,6 +149,14 @@ export function MapEditor() {
   const [mapsOpen, setMapsOpen] = useState(false);
   const [addingMap, setAddingMap] = useState(false);
   const [newMapName, setNewMapName] = useState("");
+  const [eventDatabase, setEventDatabase] = useState<EventDatabase>(
+    () => structuredClone(BASE_EVENT_DATABASE),
+  );
+  const eventDatabaseRef = useRef<EventDatabase>(
+    structuredClone(BASE_EVENT_DATABASE),
+  );
+  const eventSaveQueue = useRef<Promise<void>>(Promise.resolve());
+  const [contextEventId, setContextEventId] = useState<number | null>(null);
   const [cameraOffset, setCameraOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const panGesture = useRef<{
@@ -145,27 +173,28 @@ export function MapEditor() {
   const [status, setStatus] = useState("UNSAVED");
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return;
+    void readMapProject()
+      .then((project) => {
+        const nextDocuments = project.maps as MapDocument[];
+        setDocuments(nextDocuments);
+        eventDatabaseRef.current = project.eventDatabase;
+        setEventDatabase(project.eventDatabase);
 
-    try {
-      const parsed = JSON.parse(stored) as MapDocument[];
-      if (!Array.isArray(parsed) || parsed.length === 0) return;
-
-      const entrance = parsed.find((document) => document.id === "entrance");
-      const nextDocuments = entrance
-        ? parsed
-        : [ENTRANCE_DOCUMENT, ...parsed];
-      setDocuments(nextDocuments);
-
-      const selected = nextDocuments.find(
-        (document) => document.id === selectedMapId,
-      );
-      if (selected) selectMapDocument(selected);
-    } catch {
-      setStatus("INVALID MAP STORAGE");
-    }
+        const selected =
+          nextDocuments.find((document) => document.id === selectedMapId) ??
+          nextDocuments[0];
+        if (selected) selectMapDocument(selected);
+      })
+      .catch(() => setStatus("FAILED TO READ JSON DATA"));
   }, []);
+
+  function commitEventDatabase(database: EventDatabase) {
+    eventDatabaseRef.current = database;
+    setEventDatabase(database);
+    eventSaveQueue.current = eventSaveQueue.current
+      .then(() => saveEventDatabaseJson(database))
+      .catch(() => setStatus("FAILED TO WRITE EVENTS.JSON"));
+  }
 
   function chooseLayer(layer: EditorLayer) {
     setActiveLayer(layer);
@@ -173,20 +202,45 @@ export function MapEditor() {
   }
 
   function paint(x: number, y: number) {
+    const currentCellEvents = map.events[y]?.[x] ?? [];
+
+    if (activeLayer === "events" && brush.kind === "event") {
+      if (currentCellEvents.length === 0) {
+        const created = createEventEntity(
+          eventDatabaseRef.current,
+          selectedMapId,
+        );
+        commitEventDatabase(created.database);
+        setMap((current) => {
+          const next = structuredClone(current);
+          next.events[y]![x] = [
+            {
+              eventId: created.event.id,
+              id: `event-${created.event.id}`,
+              type: "entity",
+            },
+          ];
+          return next;
+        });
+      }
+
+      setStatus("UNSAVED");
+      return;
+    }
+
+    if (activeLayer === "events" && brush.kind === "erase") {
+      let nextDatabase = eventDatabaseRef.current;
+      for (const event of currentCellEvents) {
+        nextDatabase = removeEventEntity(nextDatabase, event.eventId);
+      }
+      if (currentCellEvents.length > 0) commitEventDatabase(nextDatabase);
+    }
+
     setMap((current) => {
       const next = structuredClone(current);
 
       if (activeLayer === "events") {
-        if (brush.kind === "event") {
-          for (const row of next.events) {
-            for (let column = 0; column < row.length; column += 1) {
-              row[column] = row[column]!.filter(
-                (event) => event.type !== "player-spawn",
-              );
-            }
-          }
-          next.events[y]![x] = [brush.event];
-        } else if (brush.kind === "erase") {
+        if (brush.kind === "erase") {
           next.events[y]![x] = [];
         }
       } else if (brush.kind === "tile") {
@@ -253,15 +307,21 @@ export function MapEditor() {
     setStatus("RESIZED TOP");
   }
 
-  function saveMap() {
-    const nextDocuments = documents.map((document) =>
-      document.id === selectedMapId
-        ? { ...document, map: structuredClone(map) }
-        : document,
-    );
-    setDocuments(nextDocuments);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextDocuments));
-    setStatus("SAVED");
+  async function saveMap() {
+    setStatus("SAVING JSON...");
+    try {
+      await saveMapJson(selectedMapId, map);
+      setDocuments((current) =>
+        current.map((document) =>
+          document.id === selectedMapId
+            ? { ...document, map: structuredClone(map) }
+            : document,
+        ),
+      );
+      setStatus("JSON SAVED");
+    } catch {
+      setStatus("FAILED TO WRITE MAP JSON");
+    }
   }
 
   function selectMapDocument(document: MapDocument) {
@@ -274,26 +334,78 @@ export function MapEditor() {
     setStatus(`OPENED ${document.name.toUpperCase()}`);
   }
 
-  function createNamedMap() {
+  async function createNamedMap() {
     const name = newMapName.trim();
     if (!name) return;
 
-    const document: MapDocument = {
-      id: `${name.toLowerCase().replace(/[^a-z0-9_-]+/g, "-") || "map"}-${Date.now()}`,
-      map: createMap(widthInput, heightInput),
-      name,
-    };
-    const nextDocuments = [...documents, document];
-    setDocuments(nextDocuments);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextDocuments));
-    setNewMapName("");
-    selectMapDocument(document);
-    setStatus(`CREATED ${name.toUpperCase()}`);
+    try {
+      const newMap = createMap(widthInput, heightInput);
+      const created = await createMapJson(name, newMap);
+      const document: MapDocument = { ...created, map: newMap };
+      setDocuments((current) => [...current, document]);
+      setNewMapName("");
+      selectMapDocument(document);
+      setStatus(`CREATED ${created.name.toUpperCase()}.JSON`);
+    } catch {
+      setStatus("FAILED TO CREATE MAP JSON");
+    }
   }
 
   async function copyMap() {
     await navigator.clipboard.writeText(JSON.stringify(map, null, 2));
     setStatus("JSON COPIED");
+  }
+
+  function openEventModal(events: readonly EditorEvent[]) {
+    const event = events[0];
+    if (event) setContextEventId(event.eventId);
+  }
+
+  function updateEventDefinition(updated: EventEntity) {
+    commitEventDatabase({
+      ...eventDatabaseRef.current,
+      events: eventDatabaseRef.current.events.map((event) =>
+        event.id === updated.id ? updated : event,
+      ),
+    });
+    setStatus(`EVENT #${updated.id} UPDATED`);
+  }
+
+  function addScript(type: EventScript["type"]) {
+    if (contextEventId === null) return;
+    const nextDatabase = addEventScript(
+      eventDatabaseRef.current,
+      contextEventId,
+      type,
+    );
+    commitEventDatabase(nextDatabase);
+    setStatus(`${type.toUpperCase()} ADDED TO EVENT #${contextEventId}`);
+  }
+
+  function connectEvent(scriptId: number, targetId: number) {
+    if (contextEventId === null) return;
+    const connected = connectTransitScript(
+      eventDatabaseRef.current,
+      contextEventId,
+      scriptId,
+      targetId,
+    );
+
+    if (!connected) {
+      setStatus("CONNECT REQUIRES DESTINATION ON ANOTHER MAP");
+      return;
+    }
+
+    commitEventDatabase(connected);
+    setStatus(`TRANSIT CONNECTED TO DESTINATION #${targetId}`);
+  }
+
+  function deleteScript(scriptId: number) {
+    if (contextEventId === null) return;
+    commitEventDatabase(
+      removeEventScript(eventDatabaseRef.current, contextEventId, scriptId),
+    );
+    setStatus(`SCRIPT #${scriptId} DELETED`);
   }
 
   const canvasStyle: CSSProperties = {
@@ -314,6 +426,11 @@ export function MapEditor() {
   const selectedMapName =
     documents.find((document) => document.id === selectedMapId)?.name ??
     "entrance";
+  const contextEvent =
+    contextEventId === null
+      ? null
+      : eventDatabase.events.find((event) => event.id === contextEventId) ??
+        null;
 
   return (
     <main className={styles.editor}>
@@ -407,7 +524,9 @@ export function MapEditor() {
         <span>
           EVENTS:{" "}
           {inspectedCell?.events.length
-            ? inspectedCell.events.map((event) => event.type).join(", ")
+            ? inspectedCell.events
+                .map((event) => `#${event.eventId}`)
+                .join(", ")
             : "EMPTY"}
         </span>
       </section>
@@ -443,6 +562,10 @@ export function MapEditor() {
                     setHoveredCell({ x, y });
                     dragPaint(event, x, y);
                   }}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    openEventModal(map.events[y]![x]!);
+                  }}
                   title={`${x}, ${y}`}
                   type="button"
                 >
@@ -457,6 +580,17 @@ export function MapEditor() {
           <span className={styles.panHint}>HOLD MIDDLE MOUSE — PAN</span>
         </section>
       </div>
+
+      {contextEvent && (
+        <EventEntityModal
+          event={contextEvent}
+          onAddScript={addScript}
+          onClose={() => setContextEventId(null)}
+          onConnect={connectEvent}
+          onDeleteScript={deleteScript}
+          onUpdate={updateEventDefinition}
+        />
+      )}
     </main>
   );
 }

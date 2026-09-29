@@ -1,0 +1,202 @@
+{
+  "events": [
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 1,
+      "interaction": "none",
+      "mapId": "entrance",
+      "scripts": [
+        {
+          "id": 1,
+          "type": "spawn"
+        }
+      ]
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 2,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 3,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 4,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 5,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 6,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 7,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 8,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 9,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 10,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 11,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 12,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 13,
+      "interaction": "none",
+      "mapId": "entrance",
+      "scripts": []
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 14,
+      "interaction": "interact",
+      "mapId": "entrance",
+      "scripts": [
+        {
+          "connectedDestinationId": 3,
+          "id": 2,
+          "type": "transit"
+        }
+      ]
+    },
+    {
+      "dialogue": {
+        "enabled": false,
+        "no": "",
+        "question": "",
+        "yes": ""
+      },
+      "id": 15,
+      "interaction": "none",
+      "mapId": "dungeon_1",
+      "scripts": [
+        {
+          "id": 3,
+          "type": "destination"
+        }
+      ]
+    }
+  ],
+  "nextEventId": 16,
+  "nextScriptId": 4
+}

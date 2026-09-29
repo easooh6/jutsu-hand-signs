@@ -3,13 +3,10 @@ import type { Tile } from "../tiles";
 export type MapCell = Tile | null;
 export type MapLayer = MapCell[][];
 
-export type MapEventTrigger = "enter" | "interact";
-
 export type MapEvent = {
+  eventId: number;
   id: string;
-  type: string;
-  trigger: MapEventTrigger;
-  data?: Readonly<Record<string, unknown>>;
+  type: "entity";
 };
 
 export type MapEventCell = readonly MapEvent[];

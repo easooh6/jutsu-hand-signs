@@ -232,11 +232,276 @@
 }
 
 .tilePreview,
-.spawnTile {
+.spawnTile,
+.transitionTile {
   display: block;
   width: 48px;
   height: 48px;
   image-rendering: pixelated;
+}
+
+.eventSettings {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 70;
+  width: min(25rem, calc(100vw - 3rem));
+  border: 3px solid #817b67;
+  background: #101115;
+  padding: 0.8rem;
+  box-shadow: 7px 7px 0 rgb(0 0 0 / 0.7);
+}
+
+.eventSettings header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+  color: #fff3a9;
+}
+
+.eventSettings button,
+.eventSettings input {
+  min-height: 2.4rem;
+  border: 2px solid #716d5c;
+  border-radius: 0;
+  background: #15161b;
+  color: #e6dfc4;
+  font: inherit;
+  padding: 0.4rem 0.65rem;
+}
+
+.eventSettings header button {
+  min-width: 2.4rem;
+  padding: 0;
+  cursor: pointer;
+}
+
+.eventSettings label {
+  display: grid;
+  gap: 0.35rem;
+  color: #aaa488;
+}
+
+.eventTypeOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.eventTypeOptions button {
+  cursor: pointer;
+}
+
+.eventSettings .selectedSetting {
+  background: #d4cda9;
+  color: #111;
+}
+
+.interactionSettings .selectedSetting {
+  background: #d4cda9;
+  color: #111;
+}
+
+.dialogueSettings {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.dialogueToggle {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.dialogueToggle input {
+  min-height: auto;
+}
+
+.eventModalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 0.72);
+  padding: 1.5rem;
+}
+
+.eventModal {
+  display: grid;
+  grid-template-rows: auto minmax(13rem, 1fr) auto;
+  width: min(54rem, 100%);
+  max-height: calc(100svh - 3rem);
+  overflow: hidden;
+  border: 4px solid #817b67;
+  background: #101115;
+  font-family: Arial, Helvetica, sans-serif;
+  box-shadow:
+    inset 0 0 0 2px #292a2d,
+    10px 10px 0 rgb(0 0 0 / 0.8);
+}
+
+.eventModalHeader,
+.scriptSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eventModalHeader {
+  border-bottom: 3px solid #817b67;
+  padding: 0.8rem 1rem;
+}
+
+.eventModalHeader div {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+}
+
+.eventModalHeader small {
+  color: #918c78;
+}
+
+.eventModalHeader strong {
+  color: #fff3a9;
+  font-size: 1.55rem;
+}
+
+.eventModalHeader button,
+.scriptSectionHeader button,
+.addScriptMenu button,
+.interactionSettings button,
+.scriptItem {
+  border: 2px solid #716d5c;
+  border-radius: 0;
+  background: #15161b;
+  color: #e6dfc4;
+  font: inherit;
+  cursor: pointer;
+}
+
+.eventModalHeader button,
+.scriptSectionHeader button {
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: 1.5rem;
+}
+
+.scriptSection {
+  position: relative;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.scriptSection h2,
+.eventConfiguration h2 {
+  margin: 0;
+  color: #aaa488;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+.addScriptMenu {
+  position: absolute;
+  top: 3.8rem;
+  right: 1rem;
+  z-index: 2;
+  display: grid;
+  width: 11rem;
+  border: 2px solid #817b67;
+  background: #101115;
+  padding: 4px;
+  box-shadow: 5px 5px 0 rgb(0 0 0 / 0.65);
+}
+
+.addScriptMenu button {
+  min-height: 2.4rem;
+  text-align: left;
+}
+
+.scriptList {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.scriptItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3.2rem;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+}
+
+.scriptItem strong {
+  color: #d9d1ad;
+}
+
+.scriptItem span,
+.emptyScripts {
+  color: #777568;
+}
+
+.emptyScripts {
+  border: 2px dashed #3c3c3a;
+  padding: 1rem;
+  text-align: center;
+}
+
+.connectEditor {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.8rem;
+  color: #9ab8ff;
+}
+
+.connectEditor input,
+.dialogueSettings input {
+  min-height: 2.4rem;
+  border: 2px solid #716d5c;
+  border-radius: 0;
+  background: #15161b;
+  color: #e6dfc4;
+  font: inherit;
+  padding: 0.4rem 0.65rem;
+}
+
+.eventConfiguration {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 1rem;
+  border-top: 3px solid #817b67;
+  background: #0c0d10;
+  padding: 1rem;
+}
+
+.interactionSettings,
+.dialogueSettings {
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+}
+
+.interactionSettings button {
+  min-height: 2.5rem;
+  text-align: left;
+  padding: 0.4rem 0.65rem;
+}
+
+.dialogueSettings label:not(.dialogueToggle) {
+  display: grid;
+  gap: 0.25rem;
+  color: #8e8a77;
+}
+
+@media (max-width: 620px) {
+  .eventConfiguration {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
 }
 
 .tilePreview {
@@ -250,11 +515,21 @@
 }
 
 .spawnTile,
+.transitionTile,
 .eventMarker {
   display: grid;
   place-items: center;
   background: #17351f;
   color: #7dff96;
+  font-weight: 700;
+}
+
+.transitionTile {
+  display: grid;
+  place-items: center;
+  background: #202b45;
+  color: #9ab8ff;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 

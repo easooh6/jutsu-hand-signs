@@ -65,21 +65,24 @@ export function TilePalette({
       {activeLayer === "events" ? (
         <div className={styles.tileGroup}>
           <span className={styles.sheetName}>EVENTS</span>
-          <button
-            className={
-              brush.kind === "event" ? styles.activeTileButton : styles.tileButton
-            }
-            onClick={() =>
-              onBrushChange({
-                event: { id: "player-spawn", type: "player-spawn" },
-                kind: "event",
-              })
-            }
-            title="Player spawn"
-            type="button"
-          >
-            <span className={styles.spawnTile}>P</span>
-          </button>
+          <div className={styles.tiles}>
+            <button
+              className={
+                brush.kind === "event"
+                  ? styles.activeTileButton
+                  : styles.tileButton
+              }
+              onClick={() =>
+                onBrushChange({
+                  kind: "event",
+                })
+              }
+              title="Event entity"
+              type="button"
+            >
+              <span className={styles.transitionTile}>+</span>
+            </button>
+          </div>
         </div>
       ) : (
         TILE_SHEETS.filter(

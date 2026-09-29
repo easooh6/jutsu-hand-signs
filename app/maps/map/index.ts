@@ -1,5 +1,5 @@
 export { canWalk } from "./collision";
-export { findMapEvent, getMapEvents } from "./events";
+export { findMapEvent, findMapEventByScript, getMapEvents } from "./events";
 export { MapOverheadRenderer, MapRenderer } from "./MapRenderer";
 export { loadGameMap } from "./serialized";
 export type {
@@ -13,6 +13,5 @@ export type {
   MapEvent,
   MapEventCell,
   MapEventLayer,
-  MapEventTrigger,
   MapLayer,
 } from "./types";

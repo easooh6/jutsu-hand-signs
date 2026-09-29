@@ -9,6 +9,7 @@ export type ActorMovementState = {
   action: WalkAction;
   cycle: number;
   direction: WalkDirection;
+  moving: boolean;
   position: GridPosition;
 };
 

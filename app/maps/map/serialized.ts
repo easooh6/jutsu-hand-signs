@@ -7,9 +7,7 @@ export type SerializedTile = {
   sheet: TileSheetId;
 };
 
-export type SerializedMapEvent = Omit<MapEvent, "trigger"> & {
-  trigger?: MapEvent["trigger"];
-};
+export type SerializedMapEvent = MapEvent;
 
 export type SerializedGameMap = {
   events: SerializedMapEvent[][][];
@@ -28,14 +26,7 @@ function hydrateLayer(layer: SerializedGameMap["ground"]): MapLayer {
 }
 
 function hydrateEvents(events: SerializedGameMap["events"]): MapEventLayer {
-  return events.map((row) =>
-    row.map((cell) =>
-      cell.map((event) => ({
-        ...event,
-        trigger: event.trigger ?? "enter",
-      })),
-    ),
-  );
+  return events;
 }
 
 export function loadGameMap(source: SerializedGameMap): GameMap {

@@ -19,21 +19,26 @@ const DIRECTION_OFFSETS: Record<WalkDirection, GridPosition> = {
 
 type UseActorMovementOptions = {
   controller: ActorController;
+  enabled?: boolean;
   initialPosition: GridPosition;
   map: GameMap;
+  onStepComplete?: (position: GridPosition) => boolean | void;
   stepDuration: number;
 };
 
 export function useActorMovement({
   controller,
+  enabled = true,
   initialPosition,
   map,
+  onStepComplete,
   stepDuration,
 }: UseActorMovementOptions): ActorMovementState {
   const [movement, setMovement] = useState<ActorMovementState>({
     action: "idle",
     cycle: 0,
     direction: "down",
+    moving: false,
     position: initialPosition,
   });
   const position = useRef(initialPosition);
@@ -42,6 +47,8 @@ export function useActorMovement({
   const idleFrameTimer = useRef<number | null>(null);
   const stepTimer = useRef<number | null>(null);
   const startStepRef = useRef<(direction: WalkDirection) => void>(() => {});
+  const onStepCompleteRef = useRef(onStepComplete);
+  onStepCompleteRef.current = onStepComplete;
 
   const startStep = useCallback(
     (direction: WalkDirection) => {
@@ -60,6 +67,7 @@ export function useActorMovement({
           ...current,
           action: "idle",
           direction,
+          moving: false,
         }));
         return;
       }
@@ -70,6 +78,7 @@ export function useActorMovement({
         action: "walk",
         cycle: current.cycle + 1,
         direction,
+        moving: true,
         position: nextPosition,
       }));
 
@@ -79,6 +88,15 @@ export function useActorMovement({
 
       stepTimer.current = window.setTimeout(() => {
         isMoving.current = false;
+        setMovement((current) => ({ ...current, moving: false }));
+        const shouldContinue =
+          onStepCompleteRef.current?.(position.current) !== false;
+
+        if (!shouldContinue) {
+          requestedDirection.current = null;
+          return;
+        }
+
         controller.onStepComplete?.();
 
         if (requestedDirection.current) {
@@ -92,6 +110,11 @@ export function useActorMovement({
   startStepRef.current = startStep;
 
   useEffect(() => {
+    if (!enabled) {
+      requestedDirection.current = null;
+      return;
+    }
+
     return controller.connect((direction) => {
       requestedDirection.current = direction;
 
@@ -99,7 +122,7 @@ export function useActorMovement({
         startStepRef.current(direction);
       }
     });
-  }, [controller]);
+  }, [controller, enabled]);
 
   useEffect(
     () => () => {

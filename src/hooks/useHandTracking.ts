@@ -19,6 +19,7 @@ import {
 import {
   createMovementController,
   detectMovement,
+  recalibrateMovement,
   type HandMovement,
 } from "../gestures/handController";
 
@@ -75,6 +76,8 @@ export function useHandTracking() {
   const [isPreparing, setIsPreparing] =
     useState(true);
 
+  const [isRecalibrating, setIsRecalibrating] =
+  useState(false);
   const eventIdRef = useRef(0);
 
   /*
@@ -98,6 +101,13 @@ export function useHandTracking() {
     useRef(0);
   const previousMovementRef =
     useRef<HandMovement | null>(null);
+
+  const recalibrateRequestedRef =
+    useRef(false);
+  
+  function recalibrate() {
+    recalibrateRequestedRef.current = true;
+  }
   useEffect(() => {
     let handLandmarker:
       | HandLandmarker
@@ -190,47 +200,53 @@ export function useHandTracking() {
       }
     }
 function processControl(
-  hand: ReturnType<
-    typeof detectHandPose
-  >
-    ) {
-      const currentMovement =
-        detectMovement(
-          hand,
-          movementController
+  hand: ReturnType<typeof detectHandPose>
+  ) {
+    if (recalibrateRequestedRef.current) {
+      setIsRecalibrating(true);
+
+      const completed =
+        recalibrateMovement(
+          movementController,
+          hand
         );
 
-      if (
-        currentMovement !==
-        previousMovementRef.current
-      ) {
-        console.log(
-          "MOVEMENT:",
-          currentMovement
-        );
+      setMovement("preparing");
 
-        previousMovementRef.current =
-          currentMovement;
+      if (completed) {
+        recalibrateRequestedRef.current = false;
+        setIsRecalibrating(false);
+
+        console.log("Movement recalibrated");
       }
 
-      setMovement(currentMovement);
+      return;
+    }
 
-      setIsPreparing(
-        currentMovement === "preparing"
+    const currentMovement =
+      detectMovement(
+        hand,
+        movementController
       );
 
-      const confirmed =
-        detectConfirm(
-          hand,
-          confirmController
-        );
+    setMovement(currentMovement);
 
-      if (confirmed) {
-        emitEvent({
-          type: "confirm",
-        });
-      }
+    setIsPreparing(
+      currentMovement === "preparing"
+    );
+
+    const confirmed =
+      detectConfirm(
+        hand,
+        confirmController
+      );
+
+    if (confirmed) {
+      emitEvent({
+        type: "confirm",
+      });
     }
+  }
 
     function processSeals(
       twoHandPose: ReturnType<
@@ -467,12 +483,12 @@ function processControl(
   return {
     videoRef,
     landmarks,
-
     isReady,
     error,
-
     movement,
     event,
     isPreparing,
+    isRecalibrating,
+    recalibrate,
   };
 }

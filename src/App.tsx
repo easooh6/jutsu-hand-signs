@@ -3,14 +3,16 @@ import { useHandTracking } from "./hooks/useHandTracking";
 
 function App() {
   const {
-    videoRef,
-    landmarks,
-    movement,
-    event,
-    isPreparing,
-    isReady,
-    error,
-  } = useHandTracking();
+      videoRef,
+      landmarks,
+      movement,
+      event,
+      isPreparing,
+      isReady,
+      error,
+      recalibrate,
+      isRecalibrating,
+    } = useHandTracking();
 
   useEffect(() => {
     if (!event) {
@@ -54,7 +56,11 @@ function App() {
           ? JSON.stringify(event)
           : "none"}
       </p>
-
+        <button onClick={recalibrate}>
+          {isRecalibrating
+            ? "Recalibrating..."
+            : "Recalibrate"}
+        </button>
       {error && <p>{error}</p>}
     </div>
   );

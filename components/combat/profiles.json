@@ -1,0 +1,9 @@
+{
+  "defaults": { "accuracy": 90, "attack": 100, "resistance": 100, "evasion": 10 },
+  "profiles": {
+    "skeleton": { "health": 120, "immunities": ["poisoned", "bleeding", "burning"], "modifiers": { "attack": -20, "accuracy": -20, "resistance": -20 }, "passives": [{ "type": "surviveLethal", "healthPercent": 30 }] },
+    "armored": { "health": 200, "immunities": ["stunned"], "modifiers": { "attack": 30, "accuracy": -25, "resistance": 30, "evasion": -20 }, "passives": [{ "type": "healthPerTurn", "percent": -8 }] },
+    "hounds": { "health": 100, "immunities": [], "modifiers": { "attack": -40, "accuracy": 20, "resistance": -20, "evasion": 35 }, "passives": [{ "type": "repeatCast", "count": 2 }] },
+    "bloodied": { "health": 150, "immunities": ["poisoned"], "modifiers": { "attack": 15, "accuracy": -30, "resistance": 15, "evasion": -10 }, "passives": [{ "type": "healthPerTurn", "percent": 5 }] }
+  }
+}

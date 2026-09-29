@@ -1,11 +1,12 @@
 import type { CharacterDefinition } from "./types";
+import { PROFILES } from "@/components/combat/runtime";
 
 export const CHARACTERS: CharacterDefinition[] = [
   {
     id: "skeleton",
     name: "Mr Bones",
     alt: "Skeleton character",
-    health: 100,
+    health: PROFILES.skeleton.health,
     imageSrc: "/characters/actor-2-8.png",
     moveDuration: 480,
     sanity: 100,
@@ -15,7 +16,7 @@ export const CHARACTERS: CharacterDefinition[] = [
     id: "armored",
     name: "Iron Maiden",
     alt: "Armored character",
-    health: 100,
+    health: PROFILES.armored.health,
     imageSrc: "/characters/actor-3-2.png",
     moveDuration: 400,
     sanity: 100,
@@ -25,7 +26,7 @@ export const CHARACTERS: CharacterDefinition[] = [
     id: "hounds",
     name: "Furball",
     alt: "Hound character",
-    health: 100,
+    health: PROFILES.hounds.health,
     imageSrc: "/characters/actor-2-2.png",
     moveDuration: 480,
     sanity: 100,
@@ -35,7 +36,7 @@ export const CHARACTERS: CharacterDefinition[] = [
     id: "bloodied",
     name: "Lord Zombie",
     alt: "Bloodied character",
-    health: 100,
+    health: PROFILES.bloodied.health,
     imageSrc: "/characters/actor-1-6.png",
     moveDuration: 480,
     sanity: 100,

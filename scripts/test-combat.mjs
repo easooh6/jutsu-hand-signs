@@ -1,0 +1,45 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+import ts from "typescript";
+
+const source = new URL("../components/combat/runtime.ts", import.meta.url);
+const compiled = ts.transpileModule(readFileSync(source, "utf8"), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, esModuleInterop: true },
+}).outputText;
+const runtimeModule = { exports: {} };
+new Function("require", "module", "exports", compiled)(createRequire(fileURLToPath(source)), runtimeModule, runtimeModule.exports);
+const { PROFILES, createCombatActor, applyStatus, removeStatus, tickActor, getModifiers, takeDamage, canAct, executeActorCast, resolveHit } = runtimeModule.exports;
+const skeleton = createCombatActor(PROFILES.skeleton);
+assert.equal(skeleton.health, 120);
+assert.equal(applyStatus(skeleton, "poisoned"), skeleton);
+assert.equal(applyStatus(skeleton, "bleeding"), skeleton);
+assert.equal(applyStatus(skeleton, "burning"), skeleton);
+assert.equal(takeDamage(skeleton, 200).health, 36);
+assert.equal(takeDamage(skeleton, 200, false).health, 0);
+assert.equal(canAct(applyStatus(skeleton, "stunned")), false);
+assert.equal(canAct(tickActor(applyStatus(skeleton, "stunned"))), true);
+const maiden = createCombatActor(PROFILES.armored);
+assert.equal(tickActor(maiden).health, 184);
+assert.equal(applyStatus(maiden, "stunned"), maiden);
+assert.deepEqual(getModifiers(maiden), { accuracy: 65, attack: 130, resistance: 130, evasion: 0 });
+let victim = createCombatActor({ health: 100, immunities: [], modifiers: {}, passives: [] });
+for (const id of ["poisoned", "bleeding", "burning"]) victim = applyStatus(victim, id);
+assert.equal(tickActor(victim).health, 78);
+assert.equal(tickActor(victim).statuses.length, 3);
+assert.equal(applyStatus(victim, "poisoned"), victim);
+assert.equal(removeStatus(victim, "poisoned").statuses.length, 2);
+assert.deepEqual(getModifiers(victim), { accuracy: 50, attack: 80, resistance: 80, evasion: 10 });
+const zombie = createCombatActor(PROFILES.bloodied);
+assert.equal(tickActor({ ...zombie, health: 100 }).health, 107.5);
+assert.equal(tickActor(zombie).health, 150);
+assert.equal(tickActor({ ...zombie, health: 0 }).health, 0);
+let casts = 0;
+await executeActorCast(createCombatActor(PROFILES.hounds), async () => { casts++; });
+assert.equal(casts, 2);
+await executeActorCast(applyStatus(skeleton, "stunned"), async () => { casts++; });
+assert.equal(casts, 2);
+const defender = createCombatActor({ health: 500, immunities: [], modifiers: { resistance: 100, evasion: -10 }, passives: [] });
+assert.equal(resolveHit(maiden, defender, 100, () => 0).health, 435);
+console.log("Combat checks passed: statuses, immunities, stacking, modifiers, passives and cast repetitions.");

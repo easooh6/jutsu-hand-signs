@@ -1,0 +1,6 @@
+{
+  "poisoned": { "tile": 2, "durationTurns": null, "modifiers": { "accuracy": -40 }, "healthPercentPerTurn": -7, "skipTurn": false },
+  "bleeding": { "tile": 1, "durationTurns": null, "modifiers": { "attack": -20, "resistance": -20 }, "healthPercentPerTurn": -5, "skipTurn": false },
+  "burning": { "tile": 3, "durationTurns": null, "modifiers": {}, "healthPercentPerTurn": -10, "skipTurn": false },
+  "stunned": { "tile": 4, "durationTurns": 1, "modifiers": {}, "healthPercentPerTurn": 0, "skipTurn": true }
+}

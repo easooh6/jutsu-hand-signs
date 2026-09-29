@@ -1,9 +1,10 @@
 import actorData from "../data/actors.json";
+import type { CombatProfile } from "@/components/combat/runtime";
 import type { SpellDefinitionId } from "@/components/spells";
 
 export type ActorDefinitionId = string;
 
-export type ActorDefinition = {
+export type ActorDefinition = CombatProfile & {
   battleEnterSound: string;
   friendly: boolean;
   health: number;

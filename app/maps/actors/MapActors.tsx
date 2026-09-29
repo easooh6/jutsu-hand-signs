@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { useCombatActor } from "@/components/combat/CombatProvider";
+import { canAct } from "@/components/combat/runtime";
 import type { CSSProperties } from "react";
 import type { GameMap, MapActorSpawn } from "../map/types";
 import { Actor } from "./Actor";
@@ -62,6 +64,7 @@ function PositionedActor({
 }
 
 type SpawnedActorProps = {
+  mapId: string;
   map: GameMap;
   onPositionChange: (
     instanceId: string,
@@ -75,6 +78,7 @@ type SpawnedActorProps = {
 };
 
 function SpawnedActor({
+  mapId,
   map,
   onPositionChange,
   occupied,
@@ -84,6 +88,7 @@ function SpawnedActor({
   y,
 }: SpawnedActorProps) {
   const definition = getActorDefinition(spawn.actorId);
+  const { actor } = useCombatActor(`npc:${mapId}:${spawn.instanceId}`, definition);
   const controller = useMemo(
     () =>
       createAIController({
@@ -93,6 +98,7 @@ function SpawnedActor({
   );
   const movement = useActorMovement({
     controller,
+    enabled: canAct(actor),
     initialDirection: spawn.direction,
     initialPosition: { x, y },
     map,
@@ -117,7 +123,7 @@ function SpawnedActor({
   return (
     <PositionedActor
       friendly={controller.friendly}
-      health={definition.health}
+      health={actor.health}
       map={map}
       moveDuration={definition.moveDuration}
       movement={movement}
@@ -128,11 +134,13 @@ function SpawnedActor({
 }
 
 export function MapActors({
+  mapId,
   map,
   onActorPositionChange,
   player,
   playerPosition,
 }: {
+  mapId: string;
   map: GameMap;
   onActorPositionChange: (
     instanceId: string,
@@ -155,6 +163,7 @@ export function MapActors({
         row.map((spawn, x) =>
           spawn ? (
             <SpawnedActor
+              mapId={mapId}
               key={spawn.instanceId}
               map={map}
               onPositionChange={onActorPositionChange}

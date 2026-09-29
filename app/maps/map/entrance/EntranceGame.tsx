@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CombatProvider, useCombatActor } from "@/components/combat/CombatProvider";
+import { PROFILES, canAct } from "@/components/combat/runtime";
 import {
   CHARACTERS,
   readCharacterChoice,
@@ -152,7 +154,7 @@ export function EntranceGame() {
   }
 
   return (
-    <>
+    <CombatProvider>
       <LoopingAudio src="/audio/music/minor_terror.ogg" />
       <RandomOneShotAudio
         maxDelayMs={60_000}
@@ -160,6 +162,7 @@ export function EntranceGame() {
         src="/audio/game/Devil1.ogg"
       />
       <EntranceSession
+        mapId={session.mapId}
         character={character}
         database={database}
         initialPosition={session.initialPosition}
@@ -167,17 +170,19 @@ export function EntranceGame() {
         map={session.map}
         onExecute={executeEvent}
       />
-    </>
+    </CombatProvider>
   );
 }
 
 function EntranceSession({
+  mapId,
   character,
   database,
   initialPosition,
   map,
   onExecute,
 }: {
+  mapId: string;
   character: CharacterDefinition;
   database: EventDatabase;
   initialPosition: GridPosition;
@@ -188,6 +193,7 @@ function EntranceSession({
   ) => boolean;
 }) {
   const { isTransitioning } = useScreenTransition();
+  const { actor: playerCombat } = useCombatActor(`player:${character.id}`, PROFILES[character.id]);
   const handDirection = useHandDirection();
   const controller = useMemo(() => createPlayerController(), []);
   const [dialogueEvent, setDialogueEvent] = useState<EventEntity | null>(null);
@@ -274,7 +280,7 @@ function EntranceSession({
 
   const movement = useActorMovement({
     controller,
-    enabled: dialogueEvent === null && !isTransitioning,
+    enabled: dialogueEvent === null && !isTransitioning && canAct(playerCombat),
     initialPosition,
     isPositionBlocked: isPlayerDestinationBlocked,
     map,
@@ -287,7 +293,7 @@ function EntranceSession({
     database,
     direction: movement.direction,
     enabled:
-      dialogueEvent === null && !movement.moving && !isTransitioning,
+      dialogueEvent === null && !movement.moving && !isTransitioning && canAct(playerCombat),
     map,
     onTrigger: triggerEvent,
     position: movement.position,
@@ -317,10 +323,11 @@ function EntranceSession({
       >
         <MapRenderer map={map}>
           <MapActors
+            mapId={mapId}
             map={map}
             onActorPositionChange={updateActorPosition}
             player={{
-              health: character.health,
+              health: playerCombat.health,
               moveDuration: character.moveDuration,
               movement,
               name: character.name,

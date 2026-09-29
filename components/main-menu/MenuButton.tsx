@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
+import { TransitionLink } from "@/components/screen-transition";
 import styles from "./MainMenu.module.css";
 
 type MenuButtonProps = {
@@ -10,9 +10,9 @@ type MenuButtonProps = {
 export function MenuButton({ children, href }: MenuButtonProps) {
   if (href) {
     return (
-      <Link className={styles.button} href={href}>
+      <TransitionLink className={styles.button} href={href}>
         {children}
-      </Link>
+      </TransitionLink>
     );
   }
 

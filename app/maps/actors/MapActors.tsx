@@ -12,27 +12,33 @@ import type { ActorMovementState, GridPosition } from "./types";
 import styles from "./MapActors.module.css";
 
 export type PlayerMapActor = {
+  health: number;
   moveDuration: number;
   movement: ActorMovementState;
   name: string;
+  sanity: number;
   spriteSrc: string;
 };
 
 type PositionedActorProps = {
   friendly: boolean;
+  health: number;
   map: GameMap;
   moveDuration: number;
   movement: ActorMovementState;
   name: string;
+  sanity?: number;
   spriteSrc: string;
 };
 
 function PositionedActor({
   friendly,
+  health,
   map,
   moveDuration,
   movement,
   name,
+  sanity,
   spriteSrc,
 }: PositionedActorProps) {
   const positionStyle: CSSProperties = {
@@ -46,6 +52,8 @@ function PositionedActor({
     <div
       className={styles.spawn}
       data-friendly={friendly ? "1" : "0"}
+      data-health={health}
+      data-sanity={sanity}
       style={positionStyle}
     >
       <Actor movement={movement} name={name} spriteSrc={spriteSrc} />
@@ -109,6 +117,7 @@ function SpawnedActor({
   return (
     <PositionedActor
       friendly={controller.friendly}
+      health={definition.health}
       map={map}
       moveDuration={definition.moveDuration}
       movement={movement}
@@ -160,10 +169,12 @@ export function MapActors({
       )}
       <PositionedActor
         friendly
+        health={player.health}
         map={map}
         moveDuration={player.moveDuration}
         movement={player.movement}
         name={player.name}
+        sanity={player.sanity}
         spriteSrc={player.spriteSrc}
       />
     </div>

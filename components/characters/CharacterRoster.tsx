@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useScreenTransition } from "@/components/screen-transition";
 import { CharacterFrame } from "./CharacterFrame";
 import { CHARACTERS } from "./data";
 import type { CharacterDefinition } from "./types";
@@ -10,12 +11,17 @@ import styles from "./CharacterRoster.module.css";
 
 export function CharacterRoster() {
   const router = useRouter();
+  const { isTransitioning, runTransition } = useScreenTransition();
   const [hoveredCharacter, setHoveredCharacter] =
     useState<CharacterDefinition | null>(null);
 
   function selectCharacter(character: CharacterDefinition) {
-    saveCharacterChoice(character.id);
-    router.push("/maps/map/entrance");
+    if (isTransitioning) return;
+
+    void runTransition(() => {
+      saveCharacterChoice(character.id);
+      router.push("/maps/map/entrance");
+    });
   }
 
   return (

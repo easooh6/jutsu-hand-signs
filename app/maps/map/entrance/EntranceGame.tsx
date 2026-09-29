@@ -9,6 +9,7 @@ import {
 import type { CharacterDefinition } from "@/components/characters";
 import { Dialogue } from "@/components/dialogue";
 import type { DialogueAnswer } from "@/components/dialogue";
+import { useScreenTransition } from "@/components/screen-transition";
 import { useWalkSpriteFrameSize } from "@/components/walk-sprite";
 import {
   createPlayerController,
@@ -54,6 +55,7 @@ function getSpawnPosition(
 
 export function EntranceGame() {
   const router = useRouter();
+  const { runTransition } = useScreenTransition();
   const [character, setCharacter] = useState<CharacterDefinition | null>(null);
   const [database, setDatabase] = useState(EVENT_DATABASE);
   const [maps, setMaps] = useState<Record<string, GameMap>>({
@@ -123,18 +125,20 @@ export function EntranceGame() {
       );
       if (!destinationCell) return false;
 
-      setSession((current) => ({
-        initialPosition: {
-          x: destinationCell.x,
-          y: destinationCell.y,
-        },
-        map: destinationMap,
-        mapId: destination.mapId,
-        revision: current.revision + 1,
-      }));
+      void runTransition(() => {
+        setSession((current) => ({
+          initialPosition: {
+            x: destinationCell.x,
+            y: destinationCell.y,
+          },
+          map: destinationMap,
+          mapId: destination.mapId,
+          revision: current.revision + 1,
+        }));
+      });
       return true;
     },
-    [database, maps],
+    [database, maps, runTransition],
   );
 
   if (!character) {
@@ -169,6 +173,7 @@ function EntranceSession({
     answer: DialogueAnswer | null,
   ) => boolean;
 }) {
+  const { isTransitioning } = useScreenTransition();
   const controller = useMemo(() => createPlayerController(), []);
   const [dialogueEvent, setDialogueEvent] = useState<EventEntity | null>(null);
   const [actorPositions, setActorPositions] = useState<
@@ -246,7 +251,7 @@ function EntranceSession({
 
   const movement = useActorMovement({
     controller,
-    enabled: dialogueEvent === null,
+    enabled: dialogueEvent === null && !isTransitioning,
     initialPosition,
     isPositionBlocked: isPlayerDestinationBlocked,
     map,
@@ -258,7 +263,8 @@ function EntranceSession({
   useInteractEvent({
     database,
     direction: movement.direction,
-    enabled: dialogueEvent === null && !movement.moving,
+    enabled:
+      dialogueEvent === null && !movement.moving && !isTransitioning,
     map,
     onTrigger: triggerEvent,
     position: movement.position,
@@ -291,9 +297,11 @@ function EntranceSession({
             map={map}
             onActorPositionChange={updateActorPosition}
             player={{
+              health: character.health,
               moveDuration: character.moveDuration,
               movement,
               name: character.name,
+              sanity: character.sanity,
               spriteSrc: character.walkSpriteSrc,
             }}
             playerPosition={movement.position}

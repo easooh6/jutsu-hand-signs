@@ -41,10 +41,7 @@ export function Spell({
       : Math.min(Math.max(iconFrame - 1, 0), Math.max(frames.length - 1, 0));
 
   useEffect(() => {
-    if (!isActive || frames.length < 2) {
-      setFrameIndex(0);
-      return;
-    }
+    if (!isActive || frames.length < 2) return;
 
     const timer = window.setInterval(() => {
       setFrameIndex((current) => (current + 1) % frames.length);
@@ -68,7 +65,10 @@ export function Spell({
     <article
       className={`${styles.spell} ${isActive ? styles.active : ""}`}
       onMouseEnter={() => setIsActive(true)}
-      onMouseLeave={() => setIsActive(false)}
+      onMouseLeave={() => {
+        setIsActive(false);
+        setFrameIndex(0);
+      }}
     >
       <div
         aria-label={`${name}: анимация спела`}

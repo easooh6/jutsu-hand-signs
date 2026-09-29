@@ -1,0 +1,24 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms linear;
+}
+
+.overlayActive {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.overlayBlocking {
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    transition-duration: 1ms;
+  }
+}

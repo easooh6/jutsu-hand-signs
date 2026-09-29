@@ -4,6 +4,7 @@ export type ActorDefinitionId = string;
 
 export type ActorDefinition = {
   friendly: boolean;
+  health: number;
   iconSrc: string;
   id: ActorDefinitionId;
   moveDuration: number;

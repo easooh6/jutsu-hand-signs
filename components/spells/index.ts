@@ -1,3 +1,3 @@
-export { SPELLS } from "./data";
+export { SPELL_DATABASE, SPELLS } from "./data";
 export { Spell } from "./Spell";
-export type { SpellDefinition, SpellPhase } from "./types";
+export type { SpellDatabase, SpellDefinition, SpellPhase } from "./types";

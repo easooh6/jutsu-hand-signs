@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ScreenTransitionProvider } from "@/components/screen-transition";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,7 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ScreenTransitionProvider>{children}</ScreenTransitionProvider>
+      </body>
     </html>
   );
 }

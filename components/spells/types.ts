@@ -15,3 +15,7 @@ export type SpellDefinition = {
   showDetails?: boolean;
   spriteSrc: string;
 };
+
+export type SpellDatabase = {
+  spells: SpellDefinition[];
+};

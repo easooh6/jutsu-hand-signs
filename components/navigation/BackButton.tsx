@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/screen-transition";
 import styles from "./BackButton.module.css";
 
 type BackButtonProps = {
@@ -8,8 +8,8 @@ type BackButtonProps = {
 
 export function BackButton({ href = "/", label = "BACK" }: BackButtonProps) {
   return (
-    <Link className={styles.backButton} href={href}>
+    <TransitionLink className={styles.backButton} href={href}>
       &lt; {label}
-    </Link>
+    </TransitionLink>
   );
 }

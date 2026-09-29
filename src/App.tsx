@@ -1,12 +1,24 @@
+import { useEffect } from "react";
 import { useHandTracking } from "./hooks/useHandTracking";
 
 function App() {
   const {
     videoRef,
     landmarks,
+    movement,
+    event,
+    isPreparing,
     isReady,
     error,
   } = useHandTracking();
+
+  useEffect(() => {
+    if (!event) {
+      return;
+    }
+
+    console.log("HAND EVENT:", event);
+  }, [event]);
 
   return (
     <div>
@@ -23,10 +35,29 @@ function App() {
         Hands detected: {landmarks.length}
       </p>
 
+      <p>
+        Camera: {isReady ? "ready" : "loading"}
+      </p>
+
+      <p>
+        Calibration:{" "}
+        {isPreparing ? "preparing" : "ready"}
+      </p>
+
+      <p>
+        Movement: {movement}
+      </p>
+
+      <p>
+        Event:{" "}
+        {event
+          ? JSON.stringify(event)
+          : "none"}
+      </p>
+
       {error && <p>{error}</p>}
-      {isReady && <p>Camera ready</p>}
     </div>
   );
 }
 
-export default App;
+export default App; 

@@ -1,5 +1,5 @@
 import { playOneShot } from "@/components/audio";
 
 export function playChaseSound() {
-  playOneShot("/audio/horror_chord.ogg");
+  playOneShot("/audio/game/horror_chord.ogg");
 }

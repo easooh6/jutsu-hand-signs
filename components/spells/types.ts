@@ -5,6 +5,9 @@ export type SpellPhase = {
 
 export type SpellSeal = "horse" | "dog" | "tiger";
 
+export type SpellCaster = "player" | "npc";
+export type SpellDefinitionId = string;
+
 export type SpellSealSlot = SpellSeal | null;
 
 export type SpellSealSequence = [
@@ -13,19 +16,33 @@ export type SpellSealSequence = [
   SpellSealSlot,
 ];
 
-export type SpellDefinition = {
+type BaseSpellDefinition = {
+  animationDurationSeconds: number;
+  castSoundSrc: string;
   columns: number;
   description: string;
   frameDuration?: number;
-  id: string;
+  id: SpellDefinitionId;
   iconFrame?: number | "last";
   name: string;
   phases: SpellPhase[];
   rows: number;
-  seals: [SpellSeal, SpellSeal, SpellSeal];
   showDetails?: boolean;
   spriteSrc: string;
 };
+
+export type PlayerSpellDefinition = BaseSpellDefinition & {
+  caster: "player";
+  seals: [SpellSeal, SpellSeal, SpellSeal];
+};
+
+export type NpcSpellDefinition = BaseSpellDefinition & {
+  caster: "npc";
+};
+
+export type SpellDefinition =
+  | PlayerSpellDefinition
+  | NpcSpellDefinition;
 
 export type SpellDatabase = {
   spells: SpellDefinition[];

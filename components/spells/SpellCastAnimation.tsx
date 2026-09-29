@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { SpellDefinition } from "./types";
 import styles from "./SpellCastAnimation.module.css";
 
@@ -15,6 +15,11 @@ type CastStyle = CSSProperties & {
   "--cast-y": string;
 };
 
+type CastPlayback = {
+  durationMs: number;
+  playbackRate: number;
+};
+
 export function SpellCastAnimation({
   onComplete,
   spell,
@@ -24,6 +29,8 @@ export function SpellCastAnimation({
 }) {
   const [frameIndex, setFrameIndex] = useState(0);
   const [frameSize, setFrameSize] = useState({ height: 0, width: 0 });
+  const [playback, setPlayback] = useState<CastPlayback | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const frames = useMemo(
     () =>
       spell.phases.flatMap((phase) =>
@@ -51,9 +58,62 @@ export function SpellCastAnimation({
   }, [spell.columns, spell.rows, spell.spriteSrc]);
 
   useEffect(() => {
+    const audio = new Audio(spell.castSoundSrc);
+    let disposed = false;
+    let prepared = false;
+
+    audio.preload = "auto";
+    audioRef.current = audio;
+
+    function preparePlayback() {
+      if (disposed || prepared) return;
+      prepared = true;
+
+      const soundDurationMs =
+        Number.isFinite(audio.duration) && audio.duration > 0
+        ? audio.duration * 1_000
+        : frames.length * (spell.frameDuration ?? 90);
+      const durationMs = spell.animationDurationSeconds * 1_000;
+
+      setPlayback({
+        durationMs,
+        playbackRate: soundDurationMs / durationMs,
+      });
+    }
+
+    audio.addEventListener("loadedmetadata", preparePlayback, { once: true });
+    audio.addEventListener("error", preparePlayback, { once: true });
+    audio.load();
+
+    return () => {
+      disposed = true;
+      audio.pause();
+      audio.removeEventListener("loadedmetadata", preparePlayback);
+      audio.removeEventListener("error", preparePlayback);
+      if (audioRef.current === audio) audioRef.current = null;
+    };
+  }, [
+    frames.length,
+    spell.animationDurationSeconds,
+    spell.castSoundSrc,
+    spell.frameDuration,
+  ]);
+
+  useEffect(() => {
+    if (!playback || frameSize.width === 0) return;
+
     if (frames.length === 0) {
       onComplete();
       return;
+    }
+
+    const audio = audioRef.current;
+    if (audio) {
+      audio.currentTime = 0;
+      audio.playbackRate = playback.playbackRate;
+      void audio.play().catch(() => {
+        // The animation still plays if browser audio permissions reject sound.
+      });
     }
 
     let nextFrame = 1;
@@ -66,10 +126,13 @@ export function SpellCastAnimation({
 
       setFrameIndex(nextFrame);
       nextFrame += 1;
-    }, spell.frameDuration ?? 90);
+    }, playback.durationMs / frames.length);
 
-    return () => window.clearInterval(timer);
-  }, [frames.length, onComplete, spell.frameDuration]);
+    return () => {
+      window.clearInterval(timer);
+      audio?.pause();
+    };
+  }, [frameSize.width, frames.length, onComplete, playback]);
 
   const frame = frames[frameIndex] ?? { column: 0, row: 0 };
   const x = spell.columns > 1 ? (frame.column / (spell.columns - 1)) * 100 : 0;

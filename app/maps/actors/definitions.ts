@@ -1,4 +1,5 @@
 import actorData from "../data/actors.json";
+import type { SpellDefinitionId } from "@/components/spells";
 
 export type ActorDefinitionId = string;
 
@@ -10,6 +11,7 @@ export type ActorDefinition = {
   id: ActorDefinitionId;
   moveDuration: number;
   name: string;
+  spellIds: SpellDefinitionId[];
   walkSpriteSrc: string;
 };
 

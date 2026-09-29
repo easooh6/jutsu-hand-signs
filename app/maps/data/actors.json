@@ -1,33 +1,36 @@
 {
   "actors": [
     {
-      "battleEnterSound": "/audio/guard_growl1.ogg",
+      "battleEnterSound": "/audio/actors/guard_growl1.ogg",
       "friendly": false,
       "health": 500,
       "iconSrc": "/characters/guard1.png",
       "id": "guard1",
       "moveDuration": 320,
       "name": "Guard",
+      "spellIds": ["hatchet", "horizontal_slash"],
       "walkSpriteSrc": "/walk/$guard1.png"
     },
     {
-      "battleEnterSound": "/audio/witch_laugh.ogg",
+      "battleEnterSound": "/audio/actors/witch_laugh.ogg",
       "friendly": false,
       "health": 500,
       "iconSrc": "/characters/black_angel.png",
       "id": "blackangel",
       "moveDuration": 480,
       "name": "Black Angel",
+      "spellIds": ["poison_cloud", "gas_attack"],
       "walkSpriteSrc": "/walk/$black_angel2.png"
     },
     {
-      "battleEnterSound": "/audio/guard_freakout.ogg",
+      "battleEnterSound": "/audio/actors/guard_freakout.ogg",
       "friendly": false,
       "health": 500,
       "iconSrc": "/characters/iron_shakespere.png",
       "id": "ironshakespeare",
       "moveDuration": 650,
       "name": "Iron Shakespeare",
+      "spellIds": ["fire_attack_1", "molten_gold"],
       "walkSpriteSrc": "/walk/$iron_shakespeare.png"
     }
   ]

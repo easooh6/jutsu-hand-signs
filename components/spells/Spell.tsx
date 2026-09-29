@@ -2,14 +2,14 @@
 
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
-import type { SpellDefinition, SpellSeal } from "./types";
+import type { PlayerSpellDefinition, SpellSeal } from "./types";
 import styles from "./Spell.module.css";
 
 type SpriteStyle = CSSProperties & {
   "--sprite-image": string;
 };
 
-type SpellProps = SpellDefinition & {
+type SpellProps = PlayerSpellDefinition & {
   onSequenceChange?: (seals: readonly SpellSeal[] | null) => void;
 };
 

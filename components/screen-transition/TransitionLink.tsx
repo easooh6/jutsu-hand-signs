@@ -7,6 +7,31 @@ import { useScreenTransition } from "./ScreenTransitionProvider";
 
 type TransitionLinkProps = ComponentProps<typeof Link>;
 
+const ROUTER_NAVIGATION_TIMEOUT_MS = 300;
+
+function waitForNavigation(destination: string) {
+  const targetUrl = new URL(destination, window.location.href).href;
+  const startedAt = performance.now();
+
+  return new Promise<void>((resolve) => {
+    function checkLocation() {
+      if (window.location.href === targetUrl) {
+        resolve();
+        return;
+      }
+
+      if (performance.now() - startedAt >= ROUTER_NAVIGATION_TIMEOUT_MS) {
+        window.location.assign(targetUrl);
+        return;
+      }
+
+      window.requestAnimationFrame(checkLocation);
+    }
+
+    window.requestAnimationFrame(checkLocation);
+  });
+}
+
 export function TransitionLink({ href, onClick, ...props }: TransitionLinkProps) {
   const router = useRouter();
   const { isTransitioning, runTransition } = useScreenTransition();
@@ -28,8 +53,10 @@ export function TransitionLink({ href, onClick, ...props }: TransitionLinkProps)
     event.preventDefault();
     if (isTransitioning) return;
 
-    void runTransition(() => {
-      router.push(href.toString());
+    void runTransition(async () => {
+      const destination = href.toString();
+      router.push(destination);
+      await waitForNavigation(destination);
     });
   }
 

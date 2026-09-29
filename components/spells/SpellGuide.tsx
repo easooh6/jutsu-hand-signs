@@ -1,15 +1,15 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { SPELLS } from "./data";
+import { PLAYER_SPELLS } from "./data";
 import { Spell } from "./Spell";
 import { SpellCastAnimation } from "./SpellCastAnimation";
 import { SpellSequence } from "./SpellSequence";
-import type { SpellDefinition, SpellSeal } from "./types";
+import type { PlayerSpellDefinition, SpellSeal } from "./types";
 import { useSpellCasting } from "./useSpellCasting";
 
 function hasSameSeals(
-  spell: SpellDefinition,
+  spell: PlayerSpellDefinition,
   seals: readonly SpellSeal[],
 ) {
   return spell.seals.every((seal, index) => seal === seals[index]);
@@ -21,11 +21,13 @@ export function SpellGuide({ className }: { className?: string }) {
   >(null);
   const [cast, setCast] = useState<{
     id: number;
-    spell: SpellDefinition;
+    spell: PlayerSpellDefinition;
   } | null>(null);
 
   const castSequence = useCallback((seals: readonly SpellSeal[]) => {
-    const spell = SPELLS.find((candidate) => hasSameSeals(candidate, seals));
+    const spell = PLAYER_SPELLS.find((candidate) =>
+      hasSameSeals(candidate, seals),
+    );
     if (!spell) return false;
 
     setCast({ id: Date.now(), spell });
@@ -54,7 +56,7 @@ export function SpellGuide({ className }: { className?: string }) {
       )}
 
       <section className={className} aria-label="Spells">
-        {SPELLS.map((spell) => (
+        {PLAYER_SPELLS.map((spell) => (
           <Spell
             key={spell.id}
             {...spell}

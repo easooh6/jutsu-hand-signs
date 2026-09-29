@@ -1,6 +1,9 @@
 {
   "spells": [
     {
+      "animationDurationSeconds": 4.68,
+      "caster": "player",
+      "castSoundSrc": "/audio/spells/hurting_damage_150pct.ogg",
       "id": "hurting",
       "name": "HURTING",
       "description": "A mass of pain gathers at a single point before bursting outward in a bloody pulse.",
@@ -19,6 +22,9 @@
       "showDetails": true
     },
     {
+      "animationDurationSeconds": 1.82,
+      "caster": "player",
+      "castSoundSrc": "/audio/spells/Explosion2.ogg",
       "id": "fire-ball",
       "name": "FIRE BALL",
       "description": "A spark erupts into a violent fireball, then scatters into burning fragments.",
@@ -39,6 +45,9 @@
       "showDetails": true
     },
     {
+      "animationDurationSeconds": 1.15,
+      "caster": "player",
+      "castSoundSrc": "/audio/spells/Water1.ogg",
       "id": "torrent",
       "name": "TORRENT",
       "description": "A violent current tears forward before breaking apart into cold spray.",
@@ -56,11 +65,14 @@
       "showDetails": true
     },
     {
+      "animationDurationSeconds": 2.5,
+      "caster": "player",
+      "castSoundSrc": "/audio/spells/alll-mer_bell_87020__zgump__bell-0105_01.ogg",
       "id": "solace",
       "name": "SOLACE",
       "description": "A soft Sylvian whisper restores wounded flesh and returns lost vitality.",
       "spriteSrc": "/spells/solace.png",
-      "iconFrame": "last",
+      "iconFrame": 16,
       "columns": 5,
       "rows": 4,
       "seals": ["horse", "horse", "horse"],
@@ -68,10 +80,122 @@
         { "row": 0, "frames": 5 },
         { "row": 1, "frames": 5 },
         { "row": 2, "frames": 5 },
-        { "row": 3, "frames": 1 }
+        { "row": 3, "frames": 5 }
       ],
       "frameDuration": 95,
       "showDetails": true
+    },
+    {
+      "animationDurationSeconds": 1,
+      "caster": "npc",
+      "castSoundSrc": "/audio/spells/sword_slash1.ogg",
+      "id": "hatchet",
+      "name": "HATCHET",
+      "description": "A savage hatchet sweep that tears through anything within reach.",
+      "spriteSrc": "/spells/hatchet.png",
+      "iconFrame": 5,
+      "columns": 5,
+      "rows": 2,
+      "phases": [
+        { "row": 0, "frames": 5 },
+        { "row": 1, "frames": 2 }
+      ],
+      "frameDuration": 90,
+      "showDetails": false
+    },
+    {
+      "animationDurationSeconds": 1.15,
+      "caster": "npc",
+      "castSoundSrc": "/audio/spells/Fire1.ogg",
+      "id": "fire_attack_1",
+      "name": "FIRE ATTACK 1",
+      "description": "A surging stream of fire tears across the battlefield.",
+      "spriteSrc": "/spells/fire_attack_1.png",
+      "iconFrame": 15,
+      "columns": 15,
+      "rows": 2,
+      "phases": [
+        { "row": 0, "frames": 15 },
+        { "row": 1, "frames": 15 }
+      ],
+      "frameDuration": 70,
+      "showDetails": false
+    },
+    {
+      "animationDurationSeconds": 2,
+      "caster": "npc",
+      "castSoundSrc": "/audio/spells/sizzle_234124__cheatsman115__sizzle_01_01.ogg",
+      "id": "molten_gold",
+      "name": "MOLTEN GOLD",
+      "description": "A stream of molten gold descends and burns through its target.",
+      "spriteSrc": "/spells/molten_gold.png",
+      "iconFrame": 5,
+      "columns": 5,
+      "rows": 4,
+      "phases": [
+        { "row": 0, "frames": 5 },
+        { "row": 1, "frames": 5 },
+        { "row": 2, "frames": 2 }
+      ],
+      "frameDuration": 90,
+      "showDetails": false
+    },
+    {
+      "animationDurationSeconds": 1,
+      "caster": "npc",
+      "castSoundSrc": "/audio/spells/slash2_370204__nekoninja__samurai-slash_01.ogg",
+      "id": "horizontal_slash",
+      "name": "HORIZONTAL SLASH",
+      "description": "A wide horizontal cut that sweeps through the target.",
+      "spriteSrc": "/spells/horizontal_slash.png",
+      "iconFrame": 5,
+      "columns": 5,
+      "rows": 2,
+      "phases": [
+        { "row": 0, "frames": 5 },
+        { "row": 1, "frames": 5 }
+      ],
+      "frameDuration": 90,
+      "showDetails": false
+    },
+    {
+      "animationDurationSeconds": 2,
+      "caster": "npc",
+      "castSoundSrc": "/audio/spells/sizzle_334675__yoyodaman234__intense-sizzling-1_01.ogg",
+      "id": "poison_cloud",
+      "name": "POISON CLOUD",
+      "description": "A toxic cloud blooms around the target and slowly disperses.",
+      "spriteSrc": "/spells/poison_cloud.png",
+      "iconFrame": 5,
+      "columns": 5,
+      "rows": 3,
+      "phases": [
+        { "row": 0, "frames": 5 },
+        { "row": 1, "frames": 5 },
+        { "row": 2, "frames": 3 }
+      ],
+      "frameDuration": 90,
+      "showDetails": false
+    },
+    {
+      "animationDurationSeconds": 2,
+      "caster": "npc",
+      "castSoundSrc": "/audio/spells/sand_215006__stevemeli__flowing-sand_01.ogg",
+      "id": "gas_attack",
+      "name": "GAS ATTACK",
+      "description": "A corrosive yellow gas coils around the target before fading away.",
+      "spriteSrc": "/spells/gas_attack.png",
+      "iconFrame": 5,
+      "columns": 5,
+      "rows": 4,
+      "phases": [
+        { "row": 0, "frames": 5 },
+        { "row": 1, "frames": 5 },
+        { "row": 2, "frames": 5 },
+        { "row": 3, "frames": 1 }
+      ],
+      "frameDuration": 90,
+      "showDetails": false
     }
   ]
 }

@@ -19,7 +19,7 @@ export function CharacterRoster() {
   function selectCharacter(character: CharacterDefinition) {
     if (isTransitioning) return;
 
-    playOneShot("/audio/oldedgar__jared-s-gate-to-hell_03.ogg");
+    playOneShot("/audio/ui/oldedgar__jared-s-gate-to-hell_03.ogg");
 
     void runTransition(() => {
       saveCharacterChoice(character.id);

@@ -24,12 +24,12 @@ export function UiAudio() {
         return;
       }
 
-      playOneShot("/audio/Cursor2.ogg");
+      playOneShot("/audio/ui/Cursor2.ogg");
     }
 
     function handleClick(event: MouseEvent) {
       if (!findInteractiveTarget(event.target)) return;
-      playOneShot("/audio/fnh_choice2.ogg");
+      playOneShot("/audio/ui/fnh_choice2.ogg");
     }
 
     document.addEventListener("pointerover", handlePointerOver);

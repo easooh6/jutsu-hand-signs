@@ -279,7 +279,10 @@ export function MapEditor() {
           next.events[y]![x] = [];
         }
       } else if (activeLayer === "actors" && brush.kind === "actor") {
-        next.actors[y]![x] = brush.actor;
+        next.actors[y]![x] = {
+          ...brush.actor,
+          instanceId: crypto.randomUUID(),
+        };
       } else if (activeLayer === "actors" && brush.kind === "erase") {
         next.actors[y]![x] = null;
       } else if (

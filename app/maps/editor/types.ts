@@ -28,6 +28,6 @@ export type EditorMap = Omit<
 
 export type EditorBrush =
   | { kind: "erase" }
-  | { actor: EditorActor; kind: "actor" }
+  | { actor: Omit<EditorActor, "instanceId">; kind: "actor" }
   | { kind: "event" }
   | { kind: "tile"; tile: EditorTile };

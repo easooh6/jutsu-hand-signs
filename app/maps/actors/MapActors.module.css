@@ -1,8 +1,24 @@
+.actorLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .spawn {
   position: absolute;
   width: max-content;
   height: max-content;
   transform: translate(-50%, -100%);
+  transition-property: left, top;
+  transition-timing-function: linear;
+  will-change: left, top;
   pointer-events: none;
   image-rendering: pixelated;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spawn {
+    transition: none;
+  }
 }

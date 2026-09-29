@@ -90,7 +90,9 @@ export function TilePalette({
                 >
                   <img alt="" src={actor.iconSrc} />
                   <span>{actor.name}</span>
-                  <small>FRIENDLY: 0</small>
+                  <small>
+                    FRIENDLY: {actor.friendly ? 1 : 0} · {actor.moveDuration}MS
+                  </small>
                 </button>
               );
             })}

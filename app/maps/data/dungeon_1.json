@@ -397,7 +397,11 @@
       null,
       null,
       null,
-      null,
+      {
+        "actorId": "guard1",
+        "direction": "down",
+        "instanceId": "422aea08-c44a-4a15-8fa8-af798f401531"
+      },
       null,
       null,
       null,

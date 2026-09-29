@@ -1,0 +1,28 @@
+{
+  "actors": [
+    {
+      "friendly": false,
+      "iconSrc": "/characters/guard1.png",
+      "id": "guard1",
+      "moveDuration": 320,
+      "name": "Guard",
+      "walkSpriteSrc": "/walk/$guard1.png"
+    },
+    {
+      "friendly": false,
+      "iconSrc": "/characters/black_angel.png",
+      "id": "blackangel",
+      "moveDuration": 480,
+      "name": "Black Angel",
+      "walkSpriteSrc": "/walk/$black_angel2.png"
+    },
+    {
+      "friendly": false,
+      "iconSrc": "/characters/iron_shakespere.png",
+      "id": "ironshakespeare",
+      "moveDuration": 650,
+      "name": "Iron Shakespeare",
+      "walkSpriteSrc": "/walk/$iron_shakespeare.png"
+    }
+  ]
+}

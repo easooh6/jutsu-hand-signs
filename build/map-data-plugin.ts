@@ -4,6 +4,7 @@ import { basename, join, resolve } from "node:path";
 import type { Plugin } from "vite";
 
 const API_ROOT = "/__zjd-data";
+const DATA_FILES = new Set(["actors.json", "events.json"]);
 
 function respondJson(
   response: ServerResponse,
@@ -62,7 +63,8 @@ export function mapData(): Plugin {
 
       if (
         changedFile.startsWith(dataRoot) &&
-        changedFile.toLowerCase().endsWith(".json")
+        changedFile.toLowerCase().endsWith(".json") &&
+        basename(changedFile).toLowerCase() !== "actors.json"
       ) {
         // These files are edited by the in-browser map editor. Reloading its
         // imported JSON modules would remount the editor and discard the
@@ -83,7 +85,7 @@ export function mapData(): Plugin {
             const filenames = (await readdir(dataDirectory))
               .filter(
                 (filename) =>
-                  filename.endsWith(".json") && filename !== "events.json",
+                  filename.endsWith(".json") && !DATA_FILES.has(filename),
               )
               .sort();
             const maps = await Promise.all(
@@ -98,7 +100,10 @@ export function mapData(): Plugin {
             const eventDatabase = JSON.parse(
               await readFile(join(dataDirectory, "events.json"), "utf8"),
             );
-            respondJson(response, 200, { eventDatabase, maps });
+            const actorDatabase = JSON.parse(
+              await readFile(join(dataDirectory, "actors.json"), "utf8"),
+            );
+            respondJson(response, 200, { actorDatabase, eventDatabase, maps });
             return;
           }
 

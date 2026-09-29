@@ -17,6 +17,7 @@ export type MapEventLayer = MapEventCell[][];
 export type MapActorSpawn = {
   actorId: ActorDefinitionId;
   direction: WalkDirection;
+  instanceId: string;
 };
 
 export type MapActorLayer = (MapActorSpawn | null)[][];

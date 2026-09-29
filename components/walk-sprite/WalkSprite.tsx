@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { CSSProperties, SyntheticEvent } from "react";
 import type { WalkDirection, WalkSpriteProps } from "./types";
 import styles from "./WalkSprite.module.css";
@@ -20,7 +20,7 @@ const DIRECTION_ROWS: Record<WalkDirection, number> = {
 const WALK_FRAMES = [0, 2] as const;
 const IDLE_FRAME = 1;
 
-type SheetSize = { height: number; width: number };
+type SheetSize = { height: number; src: string; width: number };
 
 export function WalkSprite({
   action = "idle",
@@ -31,15 +31,14 @@ export function WalkSprite({
   src,
 }: WalkSpriteProps) {
   const [sheetSize, setSheetSize] = useState<SheetSize | null>(null);
-
-  useEffect(() => setSheetSize(null), [src]);
+  const currentSheetSize = sheetSize?.src === src ? sheetSize : null;
 
   const safeScale = Math.max(scale, 0.1);
   const stepIndex = Math.max(cycle - 1, 0) % WALK_FRAMES.length;
   const frame = action === "walk" ? WALK_FRAMES[stepIndex] : IDLE_FRAME;
   const row = DIRECTION_ROWS[direction];
-  const frameWidth = (sheetSize?.width ?? 0) / COLUMNS;
-  const frameHeight = (sheetSize?.height ?? 0) / ROWS;
+  const frameWidth = (currentSheetSize?.width ?? 0) / COLUMNS;
+  const frameHeight = (currentSheetSize?.height ?? 0) / ROWS;
   const renderedWidth = frameWidth * safeScale;
   const renderedHeight = frameHeight * safeScale;
   const spriteStyle: CSSProperties = {
@@ -47,14 +46,18 @@ export function WalkSprite({
     width: renderedWidth,
   };
   const sheetStyle: CSSProperties = {
-    height: (sheetSize?.height ?? 0) * safeScale,
+    height: (currentSheetSize?.height ?? 0) * safeScale,
     transform: `translate(${-frame * renderedWidth}px, ${-row * renderedHeight}px)`,
-    width: (sheetSize?.width ?? 0) * safeScale,
+    width: (currentSheetSize?.width ?? 0) * safeScale,
   };
 
   function readSheetSize(event: SyntheticEvent<HTMLImageElement>) {
     const image = event.currentTarget;
-    setSheetSize({ height: image.naturalHeight, width: image.naturalWidth });
+    setSheetSize({
+      height: image.naturalHeight,
+      src,
+      width: image.naturalWidth,
+    });
   }
 
   return (

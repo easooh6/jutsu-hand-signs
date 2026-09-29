@@ -22,6 +22,7 @@ type UseActorMovementOptions = {
   enabled?: boolean;
   initialDirection?: WalkDirection;
   initialPosition: GridPosition;
+  isPositionBlocked?: (position: GridPosition) => boolean;
   map: GameMap;
   onStepComplete?: (position: GridPosition) => boolean | void;
   stepDuration: number;
@@ -32,6 +33,7 @@ export function useActorMovement({
   enabled = true,
   initialDirection = "down",
   initialPosition,
+  isPositionBlocked,
   map,
   onStepComplete,
   stepDuration,
@@ -50,7 +52,10 @@ export function useActorMovement({
   const stepTimer = useRef<number | null>(null);
   const startStepRef = useRef<(direction: WalkDirection) => void>(() => {});
   const onStepCompleteRef = useRef(onStepComplete);
-  onStepCompleteRef.current = onStepComplete;
+
+  useEffect(() => {
+    onStepCompleteRef.current = onStepComplete;
+  }, [onStepComplete]);
 
   const startStep = useCallback(
     (direction: WalkDirection) => {
@@ -64,7 +69,10 @@ export function useActorMovement({
         y: position.current.y + offset.y,
       };
 
-      if (!canWalk(map, nextPosition.x, nextPosition.y)) {
+      if (
+        !canWalk(map, nextPosition.x, nextPosition.y) ||
+        isPositionBlocked?.(nextPosition)
+      ) {
         setMovement((current) => ({
           ...current,
           action: "idle",
@@ -106,10 +114,12 @@ export function useActorMovement({
         }
       }, stepDuration);
     },
-    [controller, map, stepDuration],
+    [controller, isPositionBlocked, map, stepDuration],
   );
 
-  startStepRef.current = startStep;
+  useEffect(() => {
+    startStepRef.current = startStep;
+  }, [startStep]);
 
   useEffect(() => {
     if (!enabled) {
@@ -117,13 +127,19 @@ export function useActorMovement({
       return;
     }
 
-    return controller.connect((direction) => {
-      requestedDirection.current = direction;
+    return controller.connect(
+      (direction) => {
+        requestedDirection.current = direction;
 
-      if (direction) {
-        startStepRef.current(direction);
-      }
-    });
+        if (direction) {
+          startStepRef.current(direction);
+        }
+      },
+      (direction) => {
+        if (isMoving.current) return;
+        setMovement((current) => ({ ...current, direction }));
+      },
+    );
   }, [controller, enabled]);
 
   useEffect(

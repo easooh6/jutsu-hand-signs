@@ -9,8 +9,8 @@ import {
 import type { CharacterDefinition } from "@/components/characters";
 import { Dialogue } from "@/components/dialogue";
 import type { DialogueAnswer } from "@/components/dialogue";
+import { useWalkSpriteFrameSize } from "@/components/walk-sprite";
 import {
-  Actor,
   createPlayerController,
   MapActors,
   useActorMovement,
@@ -171,6 +171,45 @@ function EntranceSession({
 }) {
   const controller = useMemo(() => createPlayerController(), []);
   const [dialogueEvent, setDialogueEvent] = useState<EventEntity | null>(null);
+  const [actorPositions, setActorPositions] = useState<
+    Record<string, GridPosition>
+  >(() => {
+    const positions: Record<string, GridPosition> = {};
+    map.actors.forEach((row, y) =>
+      row.forEach((spawn, x) => {
+        if (spawn) positions[spawn.instanceId] = { x, y };
+      }),
+    );
+    return positions;
+  });
+
+  const updateActorPosition = useCallback(
+    (instanceId: string, position: GridPosition | null) => {
+      setActorPositions((current) => {
+        if (position) {
+          const previous = current[instanceId];
+          if (previous?.x === position.x && previous.y === position.y) {
+            return current;
+          }
+          return { ...current, [instanceId]: position };
+        }
+
+        if (!(instanceId in current)) return current;
+        const next = { ...current };
+        delete next[instanceId];
+        return next;
+      });
+    },
+    [],
+  );
+
+  const isPlayerDestinationBlocked = useCallback(
+    (position: GridPosition) =>
+      Object.values(actorPositions).some(
+        (actor) => actor.x === position.x && actor.y === position.y,
+      ),
+    [actorPositions],
+  );
 
   const executeEvent = useCallback(
     (event: EventEntity, answer: DialogueAnswer | null) => {
@@ -209,10 +248,12 @@ function EntranceSession({
     controller,
     enabled: dialogueEvent === null,
     initialPosition,
+    isPositionBlocked: isPlayerDestinationBlocked,
     map,
     onStepComplete: handleStepComplete,
     stepDuration: character.moveDuration,
   });
+  const playerFrame = useWalkSpriteFrameSize(character.walkSpriteSrc);
 
   useInteractEvent({
     database,
@@ -237,21 +278,26 @@ function EntranceSession({
       <Camera
         focus={{
           x: movement.position.x * map.tileSize + map.tileSize / 2,
-          y: (movement.position.y + 1) * map.tileSize,
+          y:
+            (movement.position.y + 1) * map.tileSize -
+            (playerFrame?.height ?? 0) / 2,
         }}
-        overlay={
-          <Actor
-            movement={movement}
-            name={character.name}
-            spriteSrc={character.walkSpriteSrc}
-          />
-        }
         overhead={<MapOverheadRenderer map={map} />}
         transitionDuration={character.moveDuration}
         zoom={2}
       >
         <MapRenderer map={map}>
-          <MapActors map={map} />
+          <MapActors
+            map={map}
+            onActorPositionChange={updateActorPosition}
+            player={{
+              moveDuration: character.moveDuration,
+              movement,
+              name: character.name,
+              spriteSrc: character.walkSpriteSrc,
+            }}
+            playerPosition={movement.position}
+          />
         </MapRenderer>
       </Camera>
 

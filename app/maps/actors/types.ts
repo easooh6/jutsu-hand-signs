@@ -16,6 +16,7 @@ export type ActorMovementState = {
 type ActorControllerLifecycle = {
   connect: (
     onDirectionChange: (direction: WalkDirection | null) => void,
+    onFacingChange?: (direction: WalkDirection) => void,
   ) => () => void;
   onStepComplete?: () => void;
 };
@@ -25,8 +26,11 @@ export type PlayerActorController = ActorControllerLifecycle & {
 };
 
 export type AIActorController = ActorControllerLifecycle & {
+  face: (direction: WalkDirection) => void;
   friendly: boolean;
   kind: "ai";
+  setRoute: (route: readonly WalkDirection[]) => void;
+  stop: () => void;
 };
 
 export type ActorController = PlayerActorController | AIActorController;

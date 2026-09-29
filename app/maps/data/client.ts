@@ -1,4 +1,5 @@
 import type { EventDatabase } from "../events";
+import type { ActorDatabase } from "../actors/definitions";
 import type { SerializedGameMap } from "../map";
 
 const API_ROOT = "/__zjd-data";
@@ -10,6 +11,7 @@ export type MapFileDocument = {
 };
 
 export type MapProjectData = {
+  actorDatabase: ActorDatabase;
   eventDatabase: EventDatabase;
   maps: MapFileDocument[];
 };

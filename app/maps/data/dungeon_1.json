@@ -445,7 +445,11 @@
       null,
       null,
       null,
-      null,
+      {
+        "actorId": "ironshakespeare",
+        "direction": "down",
+        "instanceId": "242d7caa-3583-4661-a3ad-cb659ea8c426"
+      },
       null,
       null,
       null,
@@ -1446,12 +1450,113 @@
         "index": 0,
         "sheet": "floor_1"
       },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
       null,
       null,
       null,
       null,
       null,
       null,
+      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1515,8 +1620,14 @@
       null,
       null,
       null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1580,8 +1691,14 @@
       null,
       null,
       null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1645,8 +1762,14 @@
       null,
       null,
       null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1710,8 +1833,14 @@
       null,
       null,
       null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1775,23 +1904,6 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
       {
         "index": 0,
         "sheet": "floor_1"
@@ -1800,48 +1912,6 @@
         "index": 0,
         "sheet": "floor_1"
       },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      {
-        "index": 0,
-        "sheet": "floor_1"
-      },
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
       null,
       null,
       null,
@@ -1881,8 +1951,14 @@
       null,
       null,
       null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1919,13 +1995,34 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1960,13 +2057,34 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -2001,13 +2119,34 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -2042,13 +2181,34 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -2110,13 +2270,34 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -2377,12 +2558,30 @@
         "index": 1,
         "sheet": "wall_1"
       },
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
       null,
       null,
       null,
@@ -2442,12 +2641,30 @@
         "index": 4,
         "sheet": "wall_1"
       },
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
       null,
       null,
       null,
@@ -2507,12 +2724,30 @@
         "index": 7,
         "sheet": "wall_1"
       },
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
       null,
       null,
       null,
@@ -2542,10 +2777,7 @@
       null,
       null,
       null,
-      {
-        "index": 4,
-        "sheet": "door_1"
-      },
+      null,
       null,
       null,
       null,
@@ -2595,10 +2827,7 @@
       null,
       null,
       null,
-      {
-        "index": 4,
-        "sheet": "door_1"
-      },
+      null,
       null,
       null,
       null,
@@ -2648,14 +2877,8 @@
       null,
       null,
       null,
-      {
-        "index": 4,
-        "sheet": "door_1"
-      },
-      {
-        "index": 4,
-        "sheet": "door_1"
-      },
+      null,
+      null,
       null,
       null,
       null,
@@ -2793,13 +3016,28 @@
         "index": 4,
         "sheet": "door_1"
       },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
       null,
       null,
       null,
@@ -2831,13 +3069,28 @@
         "index": 4,
         "sheet": "door_1"
       },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
       null,
       null,
       null,
@@ -2893,13 +3146,28 @@
         "index": 4,
         "sheet": "door_1"
       },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
       null,
       null,
       null,
@@ -3818,13 +4086,34 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 20,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 21,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 22,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 14,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 12,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 23,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 24,
+        "sheet": "back_overhead"
+      },
       null,
       null,
       null,

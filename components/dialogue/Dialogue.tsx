@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useHandConfirm } from "@/components/hand-camera";
 import styles from "./Dialogue.module.css";
 
 export type DialogueAnswer = "yes" | "no";
@@ -20,6 +21,8 @@ export function Dialogue({
 }: DialogueProps) {
   const [selected, setSelected] = useState<DialogueAnswer>("yes");
 
+  useHandConfirm(() => onAnswer(selected));
+
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.repeat) return;
@@ -34,15 +37,11 @@ export function Dialogue({
         setSelected((current) => (current === "yes" ? "no" : "yes"));
       }
 
-      if (event.code === "Enter" || event.code === "NumpadEnter") {
-        event.preventDefault();
-        onAnswer(selected);
-      }
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onAnswer, selected]);
+  }, []);
 
   return (
     <div className={styles.backdrop}>
@@ -66,7 +65,7 @@ export function Dialogue({
             {no || "NO"}
           </button>
         </div>
-        <small>← → SELECT · ENTER CONFIRM</small>
+        <small>← → SELECT · FIST CONFIRM</small>
       </section>
     </div>
   );

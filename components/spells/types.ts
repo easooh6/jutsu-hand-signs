@@ -3,6 +3,16 @@ export type SpellPhase = {
   row: number;
 };
 
+export type SpellSeal = "horse" | "dog" | "tiger";
+
+export type SpellSealSlot = SpellSeal | null;
+
+export type SpellSealSequence = [
+  SpellSealSlot,
+  SpellSealSlot,
+  SpellSealSlot,
+];
+
 export type SpellDefinition = {
   columns: number;
   description: string;
@@ -12,6 +22,7 @@ export type SpellDefinition = {
   name: string;
   phases: SpellPhase[];
   rows: number;
+  seals: [SpellSeal, SpellSeal, SpellSeal];
   showDetails?: boolean;
   spriteSrc: string;
 };

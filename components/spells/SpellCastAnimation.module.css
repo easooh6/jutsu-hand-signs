@@ -1,0 +1,41 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sprite {
+  display: block;
+  width: var(--cast-width);
+  height: var(--cast-height);
+  background-image: var(--cast-image);
+  background-repeat: no-repeat;
+  background-position: var(--cast-x) var(--cast-y);
+  background-size: var(--cast-background-width) var(--cast-background-height);
+  image-rendering: pixelated;
+  filter:
+    drop-shadow(0 0 10px rgb(255 255 255 / 0.18))
+    drop-shadow(0 0 26px rgb(0 0 0 / 0.82));
+  animation: cast-arrive 180ms steps(4, end) both;
+}
+
+@keyframes cast-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sprite {
+    animation: none;
+  }
+}

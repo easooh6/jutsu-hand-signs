@@ -1,5 +1,5 @@
 import { BackButton } from "@/components/navigation";
-import { SPELLS, Spell } from "@/components/spells";
+import { SpellGuide } from "@/components/spells";
 import styles from "./guide.module.css";
 
 export default function GuidePage() {
@@ -13,11 +13,7 @@ export default function GuidePage() {
         <h1 id="guide-title">JUTSU GUIDE</h1>
       </header>
 
-      <section className={styles.spellGrid} aria-label="Spells">
-        {SPELLS.map((spell) => (
-          <Spell key={spell.id} {...spell} />
-        ))}
-      </section>
+      <SpellGuide className={styles.spellGrid} />
     </main>
   );
 }

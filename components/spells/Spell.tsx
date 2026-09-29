@@ -2,11 +2,15 @@
 
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
-import type { SpellDefinition } from "./types";
+import type { SpellDefinition, SpellSeal } from "./types";
 import styles from "./Spell.module.css";
 
 type SpriteStyle = CSSProperties & {
   "--sprite-image": string;
+};
+
+type SpellProps = SpellDefinition & {
+  onSequenceChange?: (seals: readonly SpellSeal[] | null) => void;
 };
 
 export function Spell({
@@ -18,9 +22,11 @@ export function Spell({
   name,
   phases,
   rows,
+  seals,
   showDetails = true,
   spriteSrc,
-}: SpellDefinition) {
+  onSequenceChange,
+}: SpellProps) {
   const [isActive, setIsActive] = useState(false);
   const [frameIndex, setFrameIndex] = useState(0);
 
@@ -64,10 +70,14 @@ export function Spell({
   return (
     <article
       className={`${styles.spell} ${isActive ? styles.active : ""}`}
-      onMouseEnter={() => setIsActive(true)}
+      onMouseEnter={() => {
+        setIsActive(true);
+        onSequenceChange?.(seals);
+      }}
       onMouseLeave={() => {
         setIsActive(false);
         setFrameIndex(0);
+        onSequenceChange?.(null);
       }}
     >
       <div

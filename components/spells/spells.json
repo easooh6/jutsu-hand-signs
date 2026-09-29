@@ -8,6 +8,7 @@
       "iconFrame": 5,
       "columns": 5,
       "rows": 4,
+      "seals": ["tiger", "tiger", "tiger"],
       "phases": [
         { "row": 0, "frames": 5 },
         { "row": 1, "frames": 5 },
@@ -25,6 +26,7 @@
       "iconFrame": 5,
       "columns": 5,
       "rows": 6,
+      "seals": ["dog", "tiger", "tiger"],
       "phases": [
         { "row": 0, "frames": 5 },
         { "row": 1, "frames": 5 },
@@ -44,6 +46,7 @@
       "iconFrame": 6,
       "columns": 5,
       "rows": 4,
+      "seals": ["dog", "horse", "horse"],
       "phases": [
         { "row": 0, "frames": 5 },
         { "row": 1, "frames": 5 },
@@ -60,6 +63,7 @@
       "iconFrame": "last",
       "columns": 5,
       "rows": 4,
+      "seals": ["horse", "horse", "horse"],
       "phases": [
         { "row": 0, "frames": 5 },
         { "row": 1, "frames": 5 },

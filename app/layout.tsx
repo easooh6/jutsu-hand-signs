@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import {
+  HandCamera,
+  HandTrackingProvider,
+} from "@/components/hand-camera";
 import { ScreenTransitionProvider } from "@/components/screen-transition";
 import "./globals.css";
 
@@ -19,7 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ScreenTransitionProvider>{children}</ScreenTransitionProvider>
+        <ScreenTransitionProvider>
+          <HandTrackingProvider>
+            {children}
+            <HandCamera />
+          </HandTrackingProvider>
+        </ScreenTransitionProvider>
       </body>
     </html>
   );

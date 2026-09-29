@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "packages/jutsu-hand-signs/**",
     "next-env.d.ts",
   ]),
   {

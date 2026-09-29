@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback } from "react";
+import { useHandConfirm } from "@/components/hand-camera";
 import type { WalkDirection } from "@/components/walk-sprite";
 import type { GridPosition } from "../actors";
 import type { GameMap } from "../map";
@@ -69,33 +70,18 @@ export function useInteractEvent({
   onTrigger,
   position,
 }: UseInteractEventOptions) {
-  useEffect(() => {
-    if (!enabled) return;
+  const interact = useCallback(() => {
+    const offset = DIRECTION_OFFSETS[direction];
+    const target = {
+      x: position.x + offset.x,
+      y: position.y + offset.y,
+    };
+    const event = findEventEntityAt(map, database, target, "interact");
 
-    function interact(keyboardEvent: KeyboardEvent) {
-      if (keyboardEvent.repeat) return;
-
-      if (
-        keyboardEvent.code !== "Enter" &&
-        keyboardEvent.code !== "NumpadEnter"
-      ) {
-        return;
-      }
-
-      const offset = DIRECTION_OFFSETS[direction];
-      const target = {
-        x: position.x + offset.x,
-        y: position.y + offset.y,
-      };
-      const event = findEventEntityAt(map, database, target, "interact");
-
-      if (event) {
-        keyboardEvent.preventDefault();
-        onTrigger(event);
-      }
+    if (event) {
+      onTrigger(event);
     }
+  }, [database, direction, map, onTrigger, position.x, position.y]);
 
-    window.addEventListener("keydown", interact);
-    return () => window.removeEventListener("keydown", interact);
-  }, [database, direction, enabled, map, onTrigger, position.x, position.y]);
+  useHandConfirm(interact, enabled);
 }

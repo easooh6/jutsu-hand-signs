@@ -9,6 +9,7 @@ import {
 import type { CharacterDefinition } from "@/components/characters";
 import { Dialogue } from "@/components/dialogue";
 import type { DialogueAnswer } from "@/components/dialogue";
+import { useHandDirection } from "@/components/hand-camera";
 import { useScreenTransition } from "@/components/screen-transition";
 import { useWalkSpriteFrameSize } from "@/components/walk-sprite";
 import {
@@ -174,6 +175,7 @@ function EntranceSession({
   ) => boolean;
 }) {
   const { isTransitioning } = useScreenTransition();
+  const handDirection = useHandDirection();
   const controller = useMemo(() => createPlayerController(), []);
   const [dialogueEvent, setDialogueEvent] = useState<EventEntity | null>(null);
   const [actorPositions, setActorPositions] = useState<
@@ -207,6 +209,12 @@ function EntranceSession({
     },
     [],
   );
+
+  useEffect(() => {
+    controller.setDirection(handDirection);
+
+    return () => controller.setDirection(null);
+  }, [controller, handDirection]);
 
   const isPlayerDestinationBlocked = useCallback(
     (position: GridPosition) =>

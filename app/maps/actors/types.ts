@@ -23,6 +23,7 @@ type ActorControllerLifecycle = {
 
 export type PlayerActorController = ActorControllerLifecycle & {
   kind: "player";
+  setDirection: (direction: WalkDirection | null) => void;
 };
 
 export type AIActorController = ActorControllerLifecycle & {

@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { ACTOR_DEFINITIONS } from "../actors";
 import { getTile, TILE_SHEETS } from "../tiles";
 import type { EditorBrush, EditorLayer } from "./types";
 import styles from "./editor.module.css";
@@ -16,6 +17,7 @@ const LAYERS: readonly EditorLayer[] = [
   "ground",
   "objects",
   "overhead",
+  "actors",
   "events",
 ];
 
@@ -62,7 +64,39 @@ export function TilePalette({
         ERASER
       </button>
 
-      {activeLayer === "events" ? (
+      {activeLayer === "actors" ? (
+        <div className={styles.tileGroup}>
+          <span className={styles.sheetName}>ACTORS</span>
+          <div className={styles.actorTiles}>
+            {ACTOR_DEFINITIONS.map((actor) => {
+              const selected =
+                brush.kind === "actor" &&
+                brush.actor.actorId === actor.id;
+
+              return (
+                <button
+                  className={
+                    selected ? styles.activeActorButton : styles.actorButton
+                  }
+                  key={actor.id}
+                  onClick={() =>
+                    onBrushChange({
+                      actor: { actorId: actor.id, direction: "down" },
+                      kind: "actor",
+                    })
+                  }
+                  title={`${actor.name} — HOSTILE`}
+                  type="button"
+                >
+                  <img alt="" src={actor.iconSrc} />
+                  <span>{actor.name}</span>
+                  <small>FRIENDLY: 0</small>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : activeLayer === "events" ? (
         <div className={styles.tileGroup}>
           <span className={styles.sheetName}>EVENTS</span>
           <div className={styles.tiles}>

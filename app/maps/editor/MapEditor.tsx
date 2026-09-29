@@ -6,6 +6,7 @@ import type {
 } from "react";
 import { useEffect, useRef, useState } from "react";
 import { BackButton } from "@/components/navigation";
+import { ACTOR_DEFINITIONS } from "../actors";
 import entranceData from "../data/entrance.json";
 import eventDatabaseData from "../data/events.json";
 import {
@@ -30,6 +31,7 @@ import type {
 import { EventEntityModal } from "./EventEntityModal";
 import { TilePalette, tilePreviewStyle } from "./TilePalette";
 import type {
+  EditorActor,
   EditorBrush,
   EditorEvent,
   EditorLayer,
@@ -42,7 +44,7 @@ type MapDocument = Omit<MapFileDocument, "map"> & { map: EditorMap };
 
 const ENTRANCE_DOCUMENT: MapDocument = {
   id: "entrance",
-  map: entranceData as EditorMap,
+  map: normalizeMap(entranceData),
   name: "entrance",
 };
 const BASE_EVENT_DATABASE = eventDatabaseData as EventDatabase;
@@ -53,8 +55,15 @@ function grid<T>(width: number, height: number, value: () => T): T[][] {
   );
 }
 
+function normalizeMap(source: unknown): EditorMap {
+  const map = structuredClone(source) as EditorMap;
+  map.actors ??= grid(map.width, map.height, () => null);
+  return map;
+}
+
 function createMap(width: number, height: number): EditorMap {
   return {
+    actors: grid(width, height, () => null),
     events: grid(width, height, () => []),
     ground: grid(width, height, () => null),
     height,
@@ -92,6 +101,13 @@ function resizeLayer<T>(
 function resizeMap(current: EditorMap, width: number, height: number): EditorMap {
   return {
     ...current,
+    actors: resizeLayer(
+      current.actors,
+      current.height,
+      width,
+      height,
+      () => null,
+    ),
     events: resizeLayer(
       current.events,
       current.height,
@@ -136,11 +152,27 @@ function EventMarker({ events }: { events: readonly EditorEvent[] }) {
   return <span className={styles.eventMarker}>{labels.join("/")}</span>;
 }
 
+function ActorMarker({ actor }: { actor: EditorActor | null }) {
+  if (!actor) return null;
+  const definition = ACTOR_DEFINITIONS.find(
+    (candidate) => candidate.id === actor.actorId,
+  );
+  if (!definition) return null;
+
+  return (
+    <img
+      alt={definition.name}
+      className={styles.actorMarker}
+      src={definition.iconSrc}
+    />
+  );
+}
+
 export function MapEditor() {
   const [widthInput, setWidthInput] = useState(entranceData.width);
   const [heightInput, setHeightInput] = useState(entranceData.height);
   const [map, setMap] = useState(
-    () => structuredClone(entranceData) as EditorMap,
+    () => normalizeMap(entranceData),
   );
   const [documents, setDocuments] = useState<MapDocument[]>([
     ENTRANCE_DOCUMENT,
@@ -175,7 +207,10 @@ export function MapEditor() {
   useEffect(() => {
     void readMapProject()
       .then((project) => {
-        const nextDocuments = project.maps as MapDocument[];
+        const nextDocuments = project.maps.map((document) => ({
+          ...document,
+          map: normalizeMap(document.map),
+        }));
         setDocuments(nextDocuments);
         eventDatabaseRef.current = project.eventDatabase;
         setEventDatabase(project.eventDatabase);
@@ -243,9 +278,16 @@ export function MapEditor() {
         if (brush.kind === "erase") {
           next.events[y]![x] = [];
         }
-      } else if (brush.kind === "tile") {
+      } else if (activeLayer === "actors" && brush.kind === "actor") {
+        next.actors[y]![x] = brush.actor;
+      } else if (activeLayer === "actors" && brush.kind === "erase") {
+        next.actors[y]![x] = null;
+      } else if (
+        activeLayer !== "actors" &&
+        brush.kind === "tile"
+      ) {
         next[activeLayer][y]![x] = brush.tile;
-      } else if (brush.kind === "erase") {
+      } else if (activeLayer !== "actors" && brush.kind === "erase") {
         next[activeLayer][y]![x] = null;
       }
 
@@ -415,6 +457,7 @@ export function MapEditor() {
   };
   const inspectedCell = hoveredCell
     ? {
+        actor: map.actors[hoveredCell.y]?.[hoveredCell.x] ?? null,
         events: map.events[hoveredCell.y]?.[hoveredCell.x] ?? [],
         ground: map.ground[hoveredCell.y]?.[hoveredCell.x] ?? null,
         objects: map.objects[hoveredCell.y]?.[hoveredCell.x] ?? null,
@@ -423,6 +466,11 @@ export function MapEditor() {
     : null;
   const tileName = (tile: EditorTile | null) =>
     tile ? `${tile.sheet} #${tile.index}` : "EMPTY";
+  const actorName = (actor: EditorActor | null) =>
+    actor
+      ? ACTOR_DEFINITIONS.find((candidate) => candidate.id === actor.actorId)
+          ?.name ?? actor.actorId
+      : "EMPTY";
   const selectedMapName =
     documents.find((document) => document.id === selectedMapId)?.name ??
     "entrance";
@@ -521,6 +569,7 @@ export function MapEditor() {
         <span>GROUND: {tileName(inspectedCell?.ground ?? null)}</span>
         <span>OBJECTS: {tileName(inspectedCell?.objects ?? null)}</span>
         <span>OVERHEAD: {tileName(inspectedCell?.overhead ?? null)}</span>
+        <span>ACTOR: {actorName(inspectedCell?.actor ?? null)}</span>
         <span>
           EVENTS:{" "}
           {inspectedCell?.events.length
@@ -572,6 +621,7 @@ export function MapEditor() {
                   <CellTile tile={map.ground[y]![x]!} />
                   <CellTile tile={map.objects[y]![x]!} />
                   <CellTile tile={map.overhead[y]![x]!} />
+                  <ActorMarker actor={map.actors[y]![x]!} />
                   <EventMarker events={map.events[y]![x]!} />
                 </button>
               )),

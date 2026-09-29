@@ -1,5 +1,5 @@
 .actor {
-  width: 80px;
-  height: 110px;
+  width: max-content;
+  height: max-content;
   image-rendering: pixelated;
 }

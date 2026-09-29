@@ -1,11 +1,10 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
+import type { CSSProperties, SyntheticEvent } from "react";
 import type { WalkDirection, WalkSpriteProps } from "./types";
 import styles from "./WalkSprite.module.css";
 
-const FRAME_WIDTH = 80;
-const FRAME_HEIGHT = 110;
 const COLUMNS = 3;
 const ROWS = 4;
 
@@ -21,11 +20,7 @@ const DIRECTION_ROWS: Record<WalkDirection, number> = {
 const WALK_FRAMES = [0, 2] as const;
 const IDLE_FRAME = 1;
 
-type SpriteStyle = CSSProperties & {
-  "--frame-height": string;
-  "--frame-width": string;
-  "--sprite-image": string;
-};
+type SheetSize = { height: number; width: number };
 
 export function WalkSprite({
   action = "idle",
@@ -35,19 +30,32 @@ export function WalkSprite({
   scale = 1,
   src,
 }: WalkSpriteProps) {
+  const [sheetSize, setSheetSize] = useState<SheetSize | null>(null);
+
+  useEffect(() => setSheetSize(null), [src]);
+
   const safeScale = Math.max(scale, 0.1);
   const stepIndex = Math.max(cycle - 1, 0) % WALK_FRAMES.length;
   const frame = action === "walk" ? WALK_FRAMES[stepIndex] : IDLE_FRAME;
   const row = DIRECTION_ROWS[direction];
-  const renderedWidth = FRAME_WIDTH * safeScale;
-  const renderedHeight = FRAME_HEIGHT * safeScale;
-  const spriteStyle: SpriteStyle = {
-    "--frame-height": `${renderedHeight}px`,
-    "--frame-width": `${renderedWidth}px`,
-    "--sprite-image": `url("${src}")`,
-    backgroundPosition: `${-frame * renderedWidth}px ${-row * renderedHeight}px`,
-    backgroundSize: `${COLUMNS * renderedWidth}px ${ROWS * renderedHeight}px`,
+  const frameWidth = (sheetSize?.width ?? 0) / COLUMNS;
+  const frameHeight = (sheetSize?.height ?? 0) / ROWS;
+  const renderedWidth = frameWidth * safeScale;
+  const renderedHeight = frameHeight * safeScale;
+  const spriteStyle: CSSProperties = {
+    height: renderedHeight,
+    width: renderedWidth,
   };
+  const sheetStyle: CSSProperties = {
+    height: (sheetSize?.height ?? 0) * safeScale,
+    transform: `translate(${-frame * renderedWidth}px, ${-row * renderedHeight}px)`,
+    width: (sheetSize?.width ?? 0) * safeScale,
+  };
+
+  function readSheetSize(event: SyntheticEvent<HTMLImageElement>) {
+    const image = event.currentTarget;
+    setSheetSize({ height: image.naturalHeight, width: image.naturalWidth });
+  }
 
   return (
     <span
@@ -55,6 +63,15 @@ export function WalkSprite({
       className={styles.sprite}
       role="img"
       style={spriteStyle}
-    />
+    >
+      <img
+        alt=""
+        className={styles.sheet}
+        draggable={false}
+        onLoad={readSheetSize}
+        src={src}
+        style={sheetStyle}
+      />
+    </span>
   );
 }

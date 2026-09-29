@@ -1,6 +1,13 @@
 import { getTile } from "../tiles";
 import type { TileSheetId } from "../tiles";
-import type { GameMap, MapEvent, MapEventLayer, MapLayer } from "./types";
+import type {
+  GameMap,
+  MapActorLayer,
+  MapActorSpawn,
+  MapEvent,
+  MapEventLayer,
+  MapLayer,
+} from "./types";
 
 export type SerializedTile = {
   index: number;
@@ -8,8 +15,10 @@ export type SerializedTile = {
 };
 
 export type SerializedMapEvent = MapEvent;
+export type SerializedMapActor = MapActorSpawn;
 
 export type SerializedGameMap = {
+  actors?: (SerializedMapActor | null)[][];
   events: SerializedMapEvent[][][];
   ground: (SerializedTile | null)[][];
   height: number;
@@ -29,8 +38,18 @@ function hydrateEvents(events: SerializedGameMap["events"]): MapEventLayer {
   return events;
 }
 
+function hydrateActors(source: SerializedGameMap): MapActorLayer {
+  return (
+    source.actors ??
+    Array.from({ length: source.height }, () =>
+      Array.from({ length: source.width }, () => null),
+    )
+  );
+}
+
 export function loadGameMap(source: SerializedGameMap): GameMap {
   return {
+    actors: hydrateActors(source),
     events: hydrateEvents(source.events),
     ground: hydrateLayer(source.ground),
     height: source.height,

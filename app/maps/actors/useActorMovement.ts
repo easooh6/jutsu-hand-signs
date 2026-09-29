@@ -20,6 +20,7 @@ const DIRECTION_OFFSETS: Record<WalkDirection, GridPosition> = {
 type UseActorMovementOptions = {
   controller: ActorController;
   enabled?: boolean;
+  initialDirection?: WalkDirection;
   initialPosition: GridPosition;
   map: GameMap;
   onStepComplete?: (position: GridPosition) => boolean | void;
@@ -29,6 +30,7 @@ type UseActorMovementOptions = {
 export function useActorMovement({
   controller,
   enabled = true,
+  initialDirection = "down",
   initialPosition,
   map,
   onStepComplete,
@@ -37,7 +39,7 @@ export function useActorMovement({
   const [movement, setMovement] = useState<ActorMovementState>({
     action: "idle",
     cycle: 0,
-    direction: "down",
+    direction: initialDirection,
     moving: false,
     position: initialPosition,
   });

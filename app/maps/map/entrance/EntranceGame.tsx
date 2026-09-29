@@ -12,6 +12,7 @@ import type { DialogueAnswer } from "@/components/dialogue";
 import {
   Actor,
   createPlayerController,
+  MapActors,
   useActorMovement,
 } from "../../actors";
 import type { GridPosition } from "../../actors";
@@ -236,7 +237,7 @@ function EntranceSession({
       <Camera
         focus={{
           x: movement.position.x * map.tileSize + map.tileSize / 2,
-          y: movement.position.y * map.tileSize - 7,
+          y: (movement.position.y + 1) * map.tileSize,
         }}
         overlay={
           <Actor
@@ -249,7 +250,9 @@ function EntranceSession({
         transitionDuration={character.moveDuration}
         zoom={2}
       >
-        <MapRenderer map={map} />
+        <MapRenderer map={map}>
+          <MapActors map={map} />
+        </MapRenderer>
       </Camera>
 
       {dialogueEvent && (

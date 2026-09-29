@@ -1,3 +1,5 @@
+import type { WalkDirection } from "@/components/walk-sprite";
+import type { ActorDefinitionId } from "../actors/definitions";
 import type { Tile } from "../tiles";
 
 export type MapCell = Tile | null;
@@ -12,7 +14,15 @@ export type MapEvent = {
 export type MapEventCell = readonly MapEvent[];
 export type MapEventLayer = MapEventCell[][];
 
+export type MapActorSpawn = {
+  actorId: ActorDefinitionId;
+  direction: WalkDirection;
+};
+
+export type MapActorLayer = (MapActorSpawn | null)[][];
+
 export type GameMap = {
+  actors: MapActorLayer;
   events: MapEventLayer;
   ground: MapLayer;
   height: number;

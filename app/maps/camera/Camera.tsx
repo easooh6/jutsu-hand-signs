@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import type { GridPosition } from "../actors";
 import styles from "./Camera.module.css";
@@ -13,9 +14,6 @@ type CameraProps = {
   zoom?: number;
 };
 
-const PLAYER_WIDTH = 80;
-const PLAYER_HEIGHT = 110;
-
 export function Camera({
   children,
   focus,
@@ -24,18 +22,35 @@ export function Camera({
   transitionDuration = 480,
   zoom = 2,
 }: CameraProps) {
+  const subjectContent = useRef<HTMLDivElement>(null);
+  const [subjectHeight, setSubjectHeight] = useState(0);
   const safeZoom = Math.max(zoom, 0.1);
+  const effectiveFocus = overlay
+    ? {
+        x: focus.x,
+        y: focus.y - subjectHeight / 2,
+      }
+    : focus;
   const worldStyle: CSSProperties = {
-    transform: `translate(${-focus.x * safeZoom}px, ${-focus.y * safeZoom}px) scale(${safeZoom})`,
+    transform: `translate(${-effectiveFocus.x * safeZoom}px, ${-effectiveFocus.y * safeZoom}px) scale(${safeZoom})`,
     transitionDuration: `${transitionDuration}ms`,
   };
   const subjectStyle: CSSProperties = {
-    width: PLAYER_WIDTH * safeZoom,
-    height: PLAYER_HEIGHT * safeZoom,
+    transform: `translate(-50%, -50%) scale(${safeZoom})`,
   };
-  const subjectContentStyle: CSSProperties = {
-    transform: `scale(${safeZoom})`,
-  };
+
+  useLayoutEffect(() => {
+    const element = subjectContent.current;
+    if (!element) return;
+
+    const updateSize = () => {
+      setSubjectHeight(element.offsetHeight);
+    };
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(element);
+    updateSize();
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className={styles.camera}>
@@ -44,7 +59,7 @@ export function Camera({
       </div>
       {overlay && (
         <div className={styles.subject} style={subjectStyle}>
-          <div className={styles.subjectContent} style={subjectContentStyle}>
+          <div className={styles.subjectContent} ref={subjectContent}>
             {overlay}
           </div>
         </div>

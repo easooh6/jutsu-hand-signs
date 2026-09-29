@@ -1,9 +1,19 @@
 .sprite {
+  position: relative;
   display: inline-block;
-  width: var(--frame-width);
-  height: var(--frame-height);
   flex: 0 0 auto;
-  background-image: var(--sprite-image);
-  background-repeat: no-repeat;
+  overflow: hidden;
+  vertical-align: top;
   image-rendering: pixelated;
+}
+
+.sheet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  max-width: none;
+  transform-origin: 0 0;
+  image-rendering: pixelated;
+  user-select: none;
 }

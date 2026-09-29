@@ -1,0 +1,8 @@
+.spawn {
+  position: absolute;
+  width: max-content;
+  height: max-content;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  image-rendering: pixelated;
+}

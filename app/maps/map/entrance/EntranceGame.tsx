@@ -7,6 +7,7 @@ import {
   readCharacterChoice,
 } from "@/components/characters";
 import type { CharacterDefinition } from "@/components/characters";
+import { LoopingAudio, playOneShot } from "@/components/audio";
 import { Dialogue } from "@/components/dialogue";
 import type { DialogueAnswer } from "@/components/dialogue";
 import { useHandDirection } from "@/components/hand-camera";
@@ -147,14 +148,17 @@ export function EntranceGame() {
   }
 
   return (
-    <EntranceSession
-      character={character}
-      database={database}
-      initialPosition={session.initialPosition}
-      key={`${session.mapId}:${session.revision}`}
-      map={session.map}
-      onExecute={executeEvent}
-    />
+    <>
+      <LoopingAudio src="/audio/minor_terror.ogg" />
+      <EntranceSession
+        character={character}
+        database={database}
+        initialPosition={session.initialPosition}
+        key={`${session.mapId}:${session.revision}`}
+        map={session.map}
+        onExecute={executeEvent}
+      />
+    </>
   );
 }
 
@@ -245,6 +249,8 @@ function EntranceSession({
 
   const handleStepComplete = useCallback(
     (position: GridPosition) => {
+      playOneShot("/audio/footstep_tile2.ogg");
+
       const event = findEventEntityAt(
         map,
         database,

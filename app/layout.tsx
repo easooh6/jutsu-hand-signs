@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { UiAudio } from "@/components/audio";
 import {
   HandCamera,
   HandTrackingProvider,
@@ -27,6 +28,7 @@ export default function RootLayout({
           <HandTrackingProvider>
             {children}
             <HandCamera />
+            <UiAudio />
           </HandTrackingProvider>
         </ScreenTransitionProvider>
       </body>

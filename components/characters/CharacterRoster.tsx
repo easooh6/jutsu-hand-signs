@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { playOneShot } from "@/components/audio";
 import { useScreenTransition } from "@/components/screen-transition";
 import { CharacterFrame } from "./CharacterFrame";
 import { CHARACTERS } from "./data";
@@ -17,6 +18,8 @@ export function CharacterRoster() {
 
   function selectCharacter(character: CharacterDefinition) {
     if (isTransitioning) return;
+
+    playOneShot("/audio/oldedgar__jared-s-gate-to-hell_03.ogg");
 
     void runTransition(() => {
       saveCharacterChoice(character.id);

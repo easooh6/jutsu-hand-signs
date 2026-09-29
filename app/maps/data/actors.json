@@ -1,6 +1,7 @@
 {
   "actors": [
     {
+      "battleEnterSound": "/audio/guard_growl1.ogg",
       "friendly": false,
       "health": 500,
       "iconSrc": "/characters/guard1.png",
@@ -10,6 +11,7 @@
       "walkSpriteSrc": "/walk/$guard1.png"
     },
     {
+      "battleEnterSound": "/audio/witch_laugh.ogg",
       "friendly": false,
       "health": 500,
       "iconSrc": "/characters/black_angel.png",
@@ -19,6 +21,7 @@
       "walkSpriteSrc": "/walk/$black_angel2.png"
     },
     {
+      "battleEnterSound": "/audio/guard_freakout.ogg",
       "friendly": false,
       "health": 500,
       "iconSrc": "/characters/iron_shakespere.png",

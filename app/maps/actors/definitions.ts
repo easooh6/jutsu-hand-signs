@@ -3,6 +3,7 @@ import actorData from "../data/actors.json";
 export type ActorDefinitionId = string;
 
 export type ActorDefinition = {
+  battleEnterSound: string;
   friendly: boolean;
   health: number;
   iconSrc: string;

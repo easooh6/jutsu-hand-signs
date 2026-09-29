@@ -11,6 +11,7 @@ import {
   randomTurnDirection,
   randomWanderDelay,
 } from "./wander";
+import { playChaseSound } from "./chaseAudio";
 
 type UseAIBehaviorOptions = {
   controller: AIActorController;
@@ -74,7 +75,10 @@ export function useAIBehavior({
 
   useEffect(() => {
     if (controller.friendly) return;
-    if (playerVisible) chasing.current = true;
+    if (playerVisible && !chasing.current) {
+      chasing.current = true;
+      playChaseSound();
+    }
     if (!chasing.current || movement.moving) return;
 
     const route = findMapRoute(

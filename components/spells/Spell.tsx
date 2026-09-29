@@ -10,11 +10,13 @@ type SpriteStyle = CSSProperties & {
 };
 
 type SpellProps = PlayerSpellDefinition & {
+  compact?: boolean;
   onSequenceChange?: (seals: readonly SpellSeal[] | null) => void;
 };
 
 export function Spell({
   columns,
+  compact = false,
   description,
   frameDuration = 90,
   id,
@@ -69,7 +71,8 @@ export function Spell({
 
   return (
     <article
-      className={`${styles.spell} ${isActive ? styles.active : ""}`}
+      className={`${styles.spell} ${compact ? styles.compact : ""} ${isActive ? styles.active : ""}`}
+      title={compact ? `${name}: ${description}` : undefined}
       onMouseEnter={() => {
         setIsActive(true);
         onSequenceChange?.(seals);

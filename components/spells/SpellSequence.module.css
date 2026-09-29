@@ -58,6 +58,9 @@
   transition: filter 180ms steps(4, end);
 }
 
+.sequence.compact { position: static; transform: none; pointer-events: auto; gap: 0.75rem; }
+.compact .sphere { width: 3.75rem; }
+
 .sphere::before {
   position: absolute;
   inset: 7%;

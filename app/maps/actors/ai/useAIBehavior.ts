@@ -14,6 +14,8 @@ import {
 import { playChaseSound } from "./chaseAudio";
 
 type UseAIBehaviorOptions = {
+  onContact?: () => void;
+  enabled?: boolean;
   controller: AIActorController;
   map: GameMap;
   movement: ActorMovementState;
@@ -22,6 +24,8 @@ type UseAIBehaviorOptions = {
 };
 
 export function useAIBehavior({
+  onContact,
+  enabled = true,
   controller,
   map,
   movement,
@@ -43,7 +47,7 @@ export function useAIBehavior({
   }, [controller]);
 
   useEffect(() => {
-    if (controller.friendly) return;
+    if (controller.friendly || !enabled) return;
 
     const timer = window.setTimeout(() => {
       if (chasing.current || movement.moving) return;
@@ -65,6 +69,7 @@ export function useAIBehavior({
     return () => window.clearTimeout(timer);
   }, [
     controller,
+    enabled,
     map,
     movement.direction,
     movement.moving,
@@ -74,12 +79,14 @@ export function useAIBehavior({
   ]);
 
   useEffect(() => {
-    if (controller.friendly) return;
+    if (controller.friendly || !enabled) return;
     if (playerVisible && !chasing.current) {
       chasing.current = true;
       playChaseSound();
     }
     if (!chasing.current || movement.moving) return;
+
+    if (Math.abs(movement.position.x - playerPosition.x) + Math.abs(movement.position.y - playerPosition.y) <= 1) onContact?.();
 
     const route = findMapRoute(
       map,
@@ -91,10 +98,12 @@ export function useAIBehavior({
       },
     );
 
-    // Combat is not implemented yet, so pursuit stops next to the player.
+    // Keep the actor adjacent to its opponent while the encounter runs.
     controller.setRoute(route ? route.slice(0, -1) : []);
   }, [
     controller,
+    enabled,
+    onContact,
     map,
     movement.position,
     movement.moving,

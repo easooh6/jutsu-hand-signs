@@ -5,7 +5,7 @@ export type SpellPhase = {
 
 export type SpellSeal = "horse" | "dog" | "tiger";
 
-export type SpellCaster = "player" | "npc";
+export type SpellCaster = "player" | "npc" | "shared";
 export type SpellDefinitionId = string;
 
 export type SpellSealSlot = SpellSeal | null;
@@ -32,7 +32,7 @@ type BaseSpellDefinition = {
 };
 
 export type PlayerSpellDefinition = BaseSpellDefinition & {
-  caster: "player";
+  caster: "player" | "shared";
   seals: [SpellSeal, SpellSeal, SpellSeal];
 };
 

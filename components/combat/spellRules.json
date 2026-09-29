@@ -1,0 +1,15 @@
+{
+  "cooldownTurns": 2,
+  "rules": {
+    "hurting": { "target": "all", "baseDamage": 35, "statuses": ["bleeding"], "selfPurges": ["poisoned"] },
+    "solace": { "target": "self", "baseDamage": 0, "purges": ["bleeding"], "healPercent": 30, "npcHealPercent": 15 },
+    "torrent": { "target": "all", "baseDamage": 30, "purges": ["burning"] },
+    "gas_attack": { "target": "all", "baseDamage": 15, "statuses": ["poisoned"] },
+    "poison_cloud": { "target": "all", "baseDamage": 20, "statuses": ["poisoned"] },
+    "fire_attack_1": { "target": "all", "baseDamage": 45, "statuses": ["burning"] },
+    "fire-ball": { "target": "all", "baseDamage": 50, "statuses": ["burning"] },
+    "hatchet": { "target": "single", "baseDamage": 55, "statuses": ["bleeding"] },
+    "horizontal_slash": { "target": "single", "baseDamage": 45, "statuses": ["bleeding"] },
+    "molten_gold": { "target": "single", "baseDamage": 35, "statuses": ["burning"], "selfHealPercent": 15, "npcCooldownTurns": 4 }
+  }
+}

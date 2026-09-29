@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CombatProvider, useCombatActor } from "@/components/combat/CombatProvider";
+import { GameHud } from "@/components/game-hud/GameHud";
+import { CombatProvider, useCombatActor, useCombatStore } from "@/components/combat/CombatProvider";
 import { PROFILES, canAct } from "@/components/combat/runtime";
 import {
   CHARACTERS,
@@ -87,7 +88,8 @@ export function EntranceGame() {
       return;
     }
 
-    setCharacter(selectedCharacter);
+    const frame = requestAnimationFrame(() => setCharacter(selectedCharacter));
+    return () => cancelAnimationFrame(frame);
   }, [router]);
 
   useEffect(() => {
@@ -120,7 +122,7 @@ export function EntranceGame() {
   }, []);
 
   const executeEvent = useCallback(
-    (event: EventEntity, _answer: DialogueAnswer | null): boolean => {
+    (event: EventEntity): boolean => {
       const destination = resolveTransitDestination(database, event);
       if (!destination) return false;
 
@@ -194,6 +196,8 @@ function EntranceSession({
 }) {
   const { isTransitioning } = useScreenTransition();
   const { actor: playerCombat } = useCombatActor(`player:${character.id}`, PROFILES[character.id]);
+  const { endEncounter } = useCombatStore();
+  useEffect(() => () => endEncounter(), [endEncounter]);
   const handDirection = useHandDirection();
   const controller = useMemo(() => createPlayerController(), []);
   const [dialogueEvent, setDialogueEvent] = useState<EventEntity | null>(null);
@@ -327,6 +331,7 @@ function EntranceSession({
             map={map}
             onActorPositionChange={updateActorPosition}
             player={{
+              actorId: `player:${character.id}`,
               health: playerCombat.health,
               moveDuration: character.moveDuration,
               movement,
@@ -347,6 +352,7 @@ function EntranceSession({
           yes={dialogueEvent.dialogue.yes}
         />
       )}
+      <GameHud actor={playerCombat} actorId={`player:${character.id}`} characterId={character.id} />
     </>
   );
 }

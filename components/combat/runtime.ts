@@ -6,6 +6,7 @@ export type Modifiers = typeof profileData.defaults;
 export type Passive =
   | { type: "surviveLethal"; healthPercent: number }
   | { type: "healthPerTurn"; percent: number }
+  | { type: "castStatuses"; chance: number; statuses: StatusId[] }
   | { type: "repeatCast"; count: number };
 export type CombatProfile = {
   health: number;
@@ -72,11 +73,6 @@ export function resolveHit(attacker: CombatActor, target: CombatActor, baseDamag
 export function getCastCount(actor: CombatActor): number {
   if (!canAct(actor)) return 0;
   return actor.passives.reduce((count, passive) => passive.type === "repeatCast" ? Math.max(count, passive.count) : count, 1);
-}
-// Each invocation is a complete spell, including its damage, sound and animation.
-export async function executeActorCast(actor: CombatActor, castOnce: () => void | Promise<void>): Promise<void> {
-  const count = getCastCount(actor);
-  for (let index = 0; index < count; index++) await castOnce();
 }
 export function tickActor(actor: CombatActor): CombatActor {
   if (actor.health <= 0) return actor;

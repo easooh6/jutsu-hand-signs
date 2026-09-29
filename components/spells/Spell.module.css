@@ -135,6 +135,11 @@
   transform: translate(-50%, 0);
 }
 
+.compact { width: 3.75rem; }
+.compact .slotButton { width: 3.75rem; height: 3.75rem; padding: 3px; clip-path: polygon(25% 0,75% 0,75% 8%,92% 8%,92% 25%,100% 25%,100% 75%,92% 75%,92% 92%,75% 92%,75% 100%,25% 100%,25% 92%,8% 92%,8% 75%,0 75%,0 25%,8% 25%,8% 8%,25% 8%); }
+.compact .sprite { width: 2.5rem; height: 2.5rem; transform: none; }
+.compact.active .slotButton { transform: none; filter: none; }
+
 @media (prefers-reduced-motion: reduce) {
   .slotButton,
   .card {

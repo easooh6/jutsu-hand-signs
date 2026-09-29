@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { useCombatActor } from "@/components/combat/CombatProvider";
+import { useCallback, useEffect, useMemo } from "react";
+import { useCombatActor, useCombatStore } from "@/components/combat/CombatProvider";
 import { canAct } from "@/components/combat/runtime";
 import type { CSSProperties } from "react";
 import type { GameMap, MapActorSpawn } from "../map/types";
@@ -14,6 +14,7 @@ import type { ActorMovementState, GridPosition } from "./types";
 import styles from "./MapActors.module.css";
 
 export type PlayerMapActor = {
+  actorId: string;
   health: number;
   moveDuration: number;
   movement: ActorMovementState;
@@ -64,6 +65,7 @@ function PositionedActor({
 }
 
 type SpawnedActorProps = {
+  playerId: string;
   mapId: string;
   map: GameMap;
   onPositionChange: (
@@ -78,6 +80,7 @@ type SpawnedActorProps = {
 };
 
 function SpawnedActor({
+  playerId,
   mapId,
   map,
   onPositionChange,
@@ -89,6 +92,8 @@ function SpawnedActor({
 }: SpawnedActorProps) {
   const definition = getActorDefinition(spawn.actorId);
   const { actor } = useCombatActor(`npc:${mapId}:${spawn.instanceId}`, definition);
+  const { beginEncounter } = useCombatStore();
+  const onContact = useCallback(() => beginEncounter(playerId, `npc:${mapId}:${spawn.instanceId}`, definition.spellIds), [beginEncounter, playerId, mapId, spawn.instanceId, definition.spellIds]);
   const controller = useMemo(
     () =>
       createAIController({
@@ -105,6 +110,8 @@ function SpawnedActor({
     stepDuration: definition.moveDuration,
   });
   useAIBehavior({
+    enabled: canAct(actor),
+    onContact,
     controller,
     map,
     movement,
@@ -163,6 +170,7 @@ export function MapActors({
         row.map((spawn, x) =>
           spawn ? (
             <SpawnedActor
+              playerId={player.actorId}
               mapId={mapId}
               key={spawn.instanceId}
               map={map}

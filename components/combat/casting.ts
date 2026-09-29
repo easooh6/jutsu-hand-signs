@@ -230,13 +230,38 @@ function finishEnemyRound(state: CombatState): CombatState {
   });
 }
 
-export function advanceCombatTurn(state: CombatState): CombatState {
+function advanceTurn(state: CombatState, tickStatuses: boolean): CombatState {
   if (isEncounterOver(state)) return haltEncounterActions(state);
   const blocked = new Set(Object.entries(state.actors).filter(([, actor]) => !canAct(actor)).map(([id]) => id));
-  let next: CombatState = { ...state, turn: state.turn + 1, actors: Object.fromEntries(Object.entries(state.actors).map(([id, actor]) => [id, tickActor(actor)])), pending: [] };
+  let next: CombatState = {
+    ...state,
+    turn: state.turn + 1,
+    actors: tickStatuses
+      ? Object.fromEntries(Object.entries(state.actors).map(([id, actor]) => [id, tickActor(actor)]))
+      : state.actors,
+    pending: [],
+  };
   for (const cast of state.pending) {
     if (cast.dueTurn > next.turn) next.pending.push(cast);
     else if (!blocked.has(cast.casterId)) next = beginCast(next, cast, true);
   }
   return haltEncounterActions(next);
+}
+
+export function advanceCombatTurn(state: CombatState): CombatState {
+  return advanceTurn(state, true);
+}
+
+export function advanceWorldCooldown(state: CombatState): CombatState {
+  return advanceTurn(state, false);
+}
+
+export function tickWorldEffects(state: CombatState): CombatState {
+  if (isEncounterOver(state)) return haltEncounterActions(state);
+  return {
+    ...state,
+    actors: Object.fromEntries(
+      Object.entries(state.actors).map(([id, actor]) => [id, tickActor(actor)]),
+    ),
+  };
 }

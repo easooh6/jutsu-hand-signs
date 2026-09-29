@@ -3,7 +3,14 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import type { ReactNode } from "react";
 import { createCombatActor } from "./runtime";
-import { advanceCombatTurn, beginCast, createCombatState, performEnemyTurn, resolveCastEvent } from "./casting";
+import {
+  advanceWorldCooldown,
+  beginCast,
+  createCombatState,
+  performEnemyTurn,
+  resolveCastEvent,
+  tickWorldEffects,
+} from "./casting";
 import type { CombatState } from "./casting";
 import { getSpellDefinition } from "@/components/spells/data";
 import { SpellCastAnimation } from "@/components/spells/SpellCastAnimation";
@@ -69,10 +76,16 @@ export function CombatProvider({ children }: { children: ReactNode }) {
     });
   }, [change]);
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      change((value) => value.encounter ? value : advanceCombatTurn(value));
+    const cooldownTimer = window.setInterval(() => {
+      change((value) => value.encounter ? value : advanceWorldCooldown(value));
+    }, 3_000);
+    const effectsTimer = window.setInterval(() => {
+      change((value) => value.encounter ? value : tickWorldEffects(value));
     }, 10_000);
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearInterval(cooldownTimer);
+      window.clearInterval(effectsTimer);
+    };
   }, [change]);
   const animation = state.animations[0];
   useEffect(() => {

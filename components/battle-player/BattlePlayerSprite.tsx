@@ -66,6 +66,7 @@ export function BattlePlayerSprite({
 
   useEffect(() => {
     let requestId = 0;
+    let completed = false;
     if (animation === "idle") {
       requestId = requestAnimationFrame(() => setFrame(0));
       return () => cancelAnimationFrame(requestId);
@@ -78,6 +79,8 @@ export function BattlePlayerSprite({
     const update = (now: number) => {
       const elapsed = now - startedAt;
       if (elapsed >= BATTLE_PLAYER_ANIMATION_DURATION_MS) {
+        if (completed) return;
+        completed = true;
         setFrame(BATTLE_PLAYER_COLUMNS - 1);
         onCompleteRef.current?.();
         return;
@@ -88,7 +91,10 @@ export function BattlePlayerSprite({
     };
 
     requestId = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(requestId);
+    return () => {
+      completed = true;
+      cancelAnimationFrame(requestId);
+    };
   }, [animation, playbackKey, spriteSrc]);
 
   if (!frameSize) return null;

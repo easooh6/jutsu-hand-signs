@@ -3,11 +3,13 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import type { CharacterDefinition } from "@/components/characters";
 import { BattlePlayer } from "@/components/battle-player";
 import type { BattlePlayerAnimation } from "@/components/battle-player";
 import { useCombatStore } from "@/components/combat/CombatProvider";
-import { getStatusIcon, increaseMaxHealthPercent } from "@/components/combat/runtime";
+import { applyVictoryUpgrade } from "@/components/combat/progression";
+import { getStatusIcon } from "@/components/combat/runtime";
 import { getActorDefinition } from "@/app/maps/actors";
 import { useScreenTransition } from "@/components/screen-transition";
 import { playOneShot } from "@/components/audio";
@@ -16,6 +18,12 @@ import styles from "./BattleScene.module.css";
 type PlayerPlayback = {
   animation: BattlePlayerAnimation;
   key: string | number;
+};
+
+const BATTLE_CHARACTER_SCALE = 2.5;
+
+type BattleSceneStyle = CSSProperties & {
+  "--battle-character-scale": number;
 };
 
 export function BattleScene({ character }: { character: CharacterDefinition }) {
@@ -30,6 +38,8 @@ export function BattleScene({ character }: { character: CharacterDefinition }) {
   const exiting = useRef(false);
   const activeEncounter = useRef<string | null>(null);
   const deathSoundPlayed = useRef(false);
+  const deathAnimationStarted = useRef(false);
+  const deathAnimationCompleted = useRef(false);
   const animation = state.animations[0];
   const definition = useMemo(
     () => encounter ? getActorDefinition(encounter.enemyDefinitionId) : null,
@@ -58,6 +68,8 @@ export function BattleScene({ character }: { character: CharacterDefinition }) {
     activeEncounter.current = encounter.enemyId;
     exiting.current = false;
     deathSoundPlayed.current = false;
+    deathAnimationStarted.current = false;
+    deathAnimationCompleted.current = false;
     playOneShot(definition.battleEnterSound);
   }, [definition, encounter]);
 
@@ -76,7 +88,8 @@ export function BattleScene({ character }: { character: CharacterDefinition }) {
   }, [enemy, player]);
 
   useEffect(() => {
-    if (!player || player.health > 0) return;
+    if (!player || player.health > 0 || deathAnimationStarted.current) return;
+    deathAnimationStarted.current = true;
     const frame = requestAnimationFrame(() => {
       setPlayerPlayback({ animation: "death", key: "death" });
     });
@@ -102,21 +115,22 @@ export function BattleScene({ character }: { character: CharacterDefinition }) {
     if (!encounter || !enemy || !player || enemy.health > 0 || player.health <= 0 || exiting.current) return;
     exiting.current = true;
     void runTransition(() => {
-      update(encounter.playerId, (actor) => increaseMaxHealthPercent(actor, 25));
+      update(encounter.playerId, (actor) => applyVictoryUpgrade(actor, character.id));
       endEncounter();
     });
-  }, [encounter, endEncounter, enemy, player, runTransition, update]);
+  }, [character.id, encounter, endEncounter, enemy, player, runTransition, update]);
 
   const completePlayerAnimation = useCallback(() => {
     if (!player) return;
     if (player.health <= 0) {
-      if (exiting.current) return;
+      if (playerPlayback.animation !== "death" || deathAnimationCompleted.current || exiting.current) return;
+      deathAnimationCompleted.current = true;
       exiting.current = true;
       void runTransition(() => router.push("/"));
       return;
     }
     setPlayerPlayback({ animation: "idle", key: `idle:${state.turn}` });
-  }, [player, router, runTransition, state.turn]);
+  }, [player, playerPlayback.animation, router, runTransition, state.turn]);
 
   if (!encounter || !definition || !player || !enemy) return null;
 
@@ -140,7 +154,11 @@ export function BattleScene({ character }: { character: CharacterDefinition }) {
       : encounter.phase;
 
   return (
-    <section className={styles.scene} aria-label={`Battle with ${definition.name}`}>
+    <section
+      aria-label={`Battle with ${definition.name}`}
+      className={styles.scene}
+      style={{ "--battle-character-scale": BATTLE_CHARACTER_SCALE } as BattleSceneStyle}
+    >
       <div className={styles.turn}>
         {displayedPhase === "player" ? "YOUR TURN" : "ENEMY TURN"}
       </div>
@@ -155,7 +173,7 @@ export function BattleScene({ character }: { character: CharacterDefinition }) {
           characterId={character.id}
           onAnimationComplete={completePlayerAnimation}
           playbackKey={playerPlayback.key}
-          scale={1.3}
+          scale={1.3 * BATTLE_CHARACTER_SCALE}
         />
       </div>
       <div

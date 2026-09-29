@@ -10,7 +10,7 @@
       "iconSrc": "/characters/guard1.png",
       "id": "guard1",
       "immunities": [],
-      "modifiers": { "accuracy": 10, "resistance": 20, "evasion": -10 },
+      "modifiers": { "accuracy": -25, "resistance": 20, "evasion": -10 },
       "passives": [{ "type": "castStatuses", "chance": 0.25, "statuses": ["stunned"] }],
       "moveDuration": 320,
       "name": "Guard",

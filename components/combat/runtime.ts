@@ -4,7 +4,7 @@ import profileData from "./profiles.json";
 export type StatusId = keyof typeof statusData;
 export type Modifiers = typeof profileData.defaults;
 export type Passive =
-  | { type: "surviveLethal"; healthPercent: number }
+  | { type: "surviveLethal"; healthPercent: number; uses: number }
   | { type: "healthPerTurn"; percent: number }
   | { type: "castStatuses"; chance: number; statuses: StatusId[] }
   | { type: "repeatCast"; count: number };
@@ -33,7 +33,14 @@ export function getStatusIcon(id: StatusId) {
 export const PROFILES = profileData.profiles as Record<string, CombatProfile>;
 
 export function createCombatActor(profile: CombatProfile): CombatActor {
-  return { ...profile, immunities: [...profile.immunities], modifiers: { ...profile.modifiers }, passives: [...profile.passives], maxHealth: profile.health, statuses: [] };
+  return {
+    ...profile,
+    immunities: [...profile.immunities],
+    modifiers: { ...profile.modifiers },
+    passives: profile.passives.map((passive) => ({ ...passive })),
+    maxHealth: profile.health,
+    statuses: [],
+  };
 }
 export function applyStatus(actor: CombatActor, id: StatusId): CombatActor {
   if (actor.health <= 0 || actor.immunities.includes(id) || actor.statuses.some((status) => status.id === id)) return actor;
@@ -42,11 +49,21 @@ export function applyStatus(actor: CombatActor, id: StatusId): CombatActor {
 export function removeStatus(actor: CombatActor, id: StatusId): CombatActor {
   return { ...actor, statuses: actor.statuses.filter((status) => status.id !== id) };
 }
-export function getModifiers(actor: CombatActor): Modifiers {
-  const result = { ...profileData.defaults };
+export function getModifierBonuses(actor: CombatActor): Modifiers {
+  const result = Object.fromEntries(
+    (Object.keys(profileData.defaults) as (keyof Modifiers)[]).map((key) => [key, 0]),
+  ) as Modifiers;
   for (const key of Object.keys(result) as (keyof Modifiers)[]) {
     result[key] += actor.modifiers[key] ?? 0;
     for (const status of actor.statuses) result[key] += STATUSES[status.id].modifiers[key] ?? 0;
+  }
+  return result;
+}
+export function getModifiers(actor: CombatActor): Modifiers {
+  const bonuses = getModifierBonuses(actor);
+  const result = { ...profileData.defaults };
+  for (const key of Object.keys(result) as (keyof Modifiers)[]) {
+    result[key] += bonuses[key];
     result[key] = Math.max(key === "resistance" ? 1 : 0, result[key]);
   }
   result.accuracy = Math.min(100, result.accuracy);
@@ -60,7 +77,16 @@ export function takeDamage(actor: CombatActor, amount: number, directHit = true)
   if (actor.health <= 0) return actor;
   let health = Math.max(0, actor.health - Math.max(0, amount));
   const survival = actor.passives.find((passive) => passive.type === "surviveLethal");
-  if (health === 0 && directHit && survival?.type === "surviveLethal") health = actor.maxHealth * survival.healthPercent / 100;
+  if (health === 0 && directHit && survival?.type === "surviveLethal" && survival.uses > 0) {
+    health = actor.maxHealth * survival.healthPercent / 100;
+    return {
+      ...actor,
+      health,
+      passives: actor.passives.map((passive) => passive === survival
+        ? { ...passive, uses: passive.uses - 1 }
+        : passive),
+    };
+  }
   return { ...actor, health };
 }
 export function restoreHealthPercent(actor: CombatActor, percent: number): CombatActor {
@@ -79,7 +105,9 @@ export function resolveHit(attacker: CombatActor, target: CombatActor, baseDamag
   const offense = getModifiers(attacker);
   const defense = getModifiers(target);
   if (random() * 100 >= offense.accuracy || random() * 100 < defense.evasion) return target;
-  return takeDamage(target, baseDamage * offense.attack / defense.resistance);
+  const attackMultiplier = offense.attack / 100;
+  const resistanceMultiplier = defense.resistance / 100;
+  return takeDamage(target, baseDamage * attackMultiplier / resistanceMultiplier);
 }
 export function getCastCount(actor: CombatActor): number {
   if (!canAct(actor)) return 0;
@@ -87,8 +115,19 @@ export function getCastCount(actor: CombatActor): number {
 }
 export function tickActor(actor: CombatActor): CombatActor {
   if (actor.health <= 0) return actor;
-  const percent = actor.statuses.reduce((sum, status) => sum + STATUSES[status.id].healthPercentPerTurn, 0)
-    + actor.passives.reduce((sum, passive) => sum + (passive.type === "healthPerTurn" ? passive.percent : 0), 0);
+  const statusPercent = actor.statuses.reduce(
+    (sum, status) => sum + STATUSES[status.id].healthPercentPerTurn,
+    0,
+  );
+  const resistanceMultiplier = getModifiers(actor).resistance / 100;
+  const resistedStatusPercent = statusPercent < 0
+    ? statusPercent / resistanceMultiplier
+    : statusPercent;
+  const passivePercent = actor.passives.reduce(
+    (sum, passive) => sum + (passive.type === "healthPerTurn" ? passive.percent : 0),
+    0,
+  );
+  const percent = resistedStatusPercent + passivePercent;
   return {
     ...actor,
     health: Math.max(0, Math.min(actor.maxHealth, actor.health + actor.maxHealth * percent / 100)),

@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GameHud } from "@/components/game-hud/GameHud";
+import { BattleScene } from "@/components/battle-scene";
 import { CombatProvider, useCombatActor, useCombatStore } from "@/components/combat/CombatProvider";
 import { PROFILES, canAct } from "@/components/combat/runtime";
 import {
@@ -13,7 +14,6 @@ import type { CharacterDefinition } from "@/components/characters";
 import {
   LoopingAudio,
   playOneShot,
-  RandomOneShotAudio,
 } from "@/components/audio";
 import { Dialogue } from "@/components/dialogue";
 import type { DialogueAnswer } from "@/components/dialogue";
@@ -158,11 +158,6 @@ export function EntranceGame() {
   return (
     <CombatProvider>
       <LoopingAudio src="/audio/music/minor_terror.ogg" />
-      <RandomOneShotAudio
-        maxDelayMs={60_000}
-        minDelayMs={15_000}
-        src="/audio/game/Devil1.ogg"
-      />
       <EntranceSession
         mapId={session.mapId}
         character={character}
@@ -194,10 +189,18 @@ function EntranceSession({
     answer: DialogueAnswer | null,
   ) => boolean;
 }) {
-  const { isTransitioning } = useScreenTransition();
+  const router = useRouter();
+  const { isTransitioning, runTransition } = useScreenTransition();
   const { actor: playerCombat } = useCombatActor(`player:${character.id}`, PROFILES[character.id]);
-  const { endEncounter } = useCombatStore();
+  const { state: combatState, endEncounter } = useCombatStore();
+  const leavingAfterDeath = useRef(false);
   useEffect(() => () => endEncounter(), [endEncounter]);
+  useEffect(() => {
+    if (playerCombat.health > 0 || combatState.encounter || leavingAfterDeath.current) return;
+    leavingAfterDeath.current = true;
+    playOneShot("/audio/game/horror_chord.ogg");
+    void runTransition(() => router.push("/"));
+  }, [combatState.encounter, playerCombat.health, router, runTransition]);
   const handDirection = useHandDirection();
   const controller = useMemo(() => createPlayerController(), []);
   const [dialogueEvent, setDialogueEvent] = useState<EventEntity | null>(null);
@@ -284,7 +287,7 @@ function EntranceSession({
 
   const movement = useActorMovement({
     controller,
-    enabled: dialogueEvent === null && !isTransitioning && canAct(playerCombat),
+    enabled: dialogueEvent === null && combatState.encounter === null && !isTransitioning && canAct(playerCombat),
     initialPosition,
     isPositionBlocked: isPlayerDestinationBlocked,
     map,
@@ -297,7 +300,7 @@ function EntranceSession({
     database,
     direction: movement.direction,
     enabled:
-      dialogueEvent === null && !movement.moving && !isTransitioning && canAct(playerCombat),
+      dialogueEvent === null && combatState.encounter === null && !movement.moving && !isTransitioning && canAct(playerCombat),
     map,
     onTrigger: triggerEvent,
     position: movement.position,
@@ -352,6 +355,7 @@ function EntranceSession({
           yes={dialogueEvent.dialogue.yes}
         />
       )}
+      <BattleScene character={character} />
       <GameHud actor={playerCombat} actorId={`player:${character.id}`} characterId={character.id} />
     </>
   );

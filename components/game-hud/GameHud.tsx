@@ -28,7 +28,13 @@ export function GameHud({ actor, actorId, characterId }: { actor: CombatActor; a
     if (!spell) return false;
     return cast(actorId, spell.id, state.encounter ? [state.encounter.enemyId] : []);
   }, [actorId, cast, state.encounter]);
-  const sequence = useSpellCasting({ enabled: !isTransitioning && canAct(actor), onCast });
+  const playerTurn = state.encounter === null || (
+    state.encounter.playerId === actorId && state.encounter.phase === "player"
+  );
+  const sequence = useSpellCasting({
+    enabled: !isTransitioning && playerTurn && state.animations.length === 0 && canAct(actor),
+    onCast,
+  });
   const statuses = actor.statuses.map((status) => status.id);
   if (characterId === "armored" && !statuses.includes("bleeding")) statuses.push("bleeding");
 

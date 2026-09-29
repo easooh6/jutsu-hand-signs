@@ -63,6 +63,17 @@ export function takeDamage(actor: CombatActor, amount: number, directHit = true)
   if (health === 0 && directHit && survival?.type === "surviveLethal") health = actor.maxHealth * survival.healthPercent / 100;
   return { ...actor, health };
 }
+export function restoreHealthPercent(actor: CombatActor, percent: number): CombatActor {
+  if (actor.health <= 0 || percent <= 0) return actor;
+  return {
+    ...actor,
+    health: Math.min(actor.maxHealth, actor.health + actor.maxHealth * percent / 100),
+  };
+}
+export function increaseMaxHealthPercent(actor: CombatActor, percent: number): CombatActor {
+  if (percent <= 0) return actor;
+  return { ...actor, maxHealth: actor.maxHealth * (1 + percent / 100) };
+}
 export function resolveHit(attacker: CombatActor, target: CombatActor, baseDamage: number, random = Math.random): CombatActor {
   if (!canAct(attacker) || target.health <= 0) return target;
   const offense = getModifiers(attacker);

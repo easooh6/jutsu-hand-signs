@@ -6,6 +6,9 @@ export type ActorDefinitionId = string;
 
 export type ActorDefinition = CombatProfile & {
   battleEnterSound: string;
+  battleSpriteSize: { height: number; width: number };
+  deadSpriteSize: { height: number; width: number };
+  deadSpriteSrc: string;
   friendly: boolean;
   health: number;
   iconSrc: string;

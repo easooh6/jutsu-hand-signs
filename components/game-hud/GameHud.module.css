@@ -20,7 +20,20 @@
 .health > span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 1.15rem; }
 .spells { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 .spell { position: relative; }
-.cooldown { position: absolute; right: 0; bottom: 0; background: #050506; border: 2px solid #cfc7a7; padding: 0 0.3rem; pointer-events: none; }
+.cooldown {
+  position: absolute;
+  z-index: 5;
+  inset: 3px;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 0.76);
+  color: #fff4cf;
+  font-size: 2rem;
+  line-height: 1;
+  text-shadow: 3px 3px #000;
+  clip-path: polygon(25% 0,75% 0,75% 8%,92% 8%,92% 25%,100% 25%,100% 75%,92% 75%,92% 92%,75% 92%,75% 100%,25% 100%,25% 92%,8% 92%,8% 75%,0 75%,0 25%,8% 25%,8% 8%,25% 8%);
+  pointer-events: none;
+}
 @media (max-width: 640px) {
   .hud { left: 11.5rem; right: 0.5rem; }
   .row { gap: 0.65rem; }

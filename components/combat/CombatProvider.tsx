@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import type { ReactNode } from "react";
 import { createCombatActor } from "./runtime";
-import { advanceCombatTurn, createCombatState, performCast } from "./casting";
+import { advanceCombatTurn, beginCast, createCombatState, performEnemyTurn, resolveCastEvent } from "./casting";
 import type { CombatState } from "./casting";
 import { getSpellDefinition } from "@/components/spells/data";
 import { SpellCastAnimation } from "@/components/spells/SpellCastAnimation";
@@ -14,7 +14,8 @@ type CombatStore = {
   register: (id: string, profile: CombatProfile) => void;
   update: (id: string, change: (actor: CombatActor) => CombatActor) => void;
   cast: (id: string, spellId: string, targets: string[]) => boolean;
-  beginEncounter: (playerId: string, enemyId: string, spellIds: string[]) => void;
+  beginEncounter: (playerId: string, enemyId: string, enemyDefinitionId: string, spellIds: string[]) => void;
+  enemyTurn: () => void;
   endEncounter: () => void;
 };
 const Context = createContext<CombatStore | null>(null);
@@ -35,26 +36,57 @@ export function CombatProvider({ children }: { children: ReactNode }) {
     change((value) => value.actors[id] ? { ...value, actors: { ...value.actors, [id]: operation(value.actors[id]) } } : value);
   }, [change]);
   const cast = useCallback((id: string, spellId: string, targets: string[]) => {
-    const previous = current.current;
-    return change((value) => performCast(value, { casterId: id, spellId, targetIds: targets, dueTurn: value.turn })) !== previous;
+    let accepted = false;
+    change((value) => {
+      const encounter = value.encounter;
+      if (value.animations.length > 0) return value;
+      if (encounter && (encounter.phase !== "player" || encounter.playerId !== id)) return value;
+      if (!encounter && id.startsWith("npc:")) return value;
+
+      const targetIds = encounter
+        ? [encounter.enemyId]
+        : targets.length === 0 ? targets : [];
+      const next = beginCast(value, { casterId: id, spellId, targetIds, dueTurn: value.turn });
+      if (next === value) return value;
+      accepted = true;
+      return encounter ? { ...next, encounter: { ...encounter, phase: "enemy" } } : next;
+    });
+    return accepted;
   }, [change]);
-  const beginEncounter = useCallback((playerId: string, enemyId: string, spellIds: string[]) => {
-    change((value) => value.encounter ? value : { ...value, encounter: { playerId, enemyId, spellIds } });
+  const beginEncounter = useCallback((playerId: string, enemyId: string, enemyDefinitionId: string, spellIds: string[]) => {
+    change((value) => value.encounter ? value : { ...value, encounter: { playerId, enemyId, enemyDefinitionId, phase: "player", spellIds } });
+  }, [change]);
+  const enemyTurn = useCallback(() => {
+    change(performEnemyTurn);
   }, [change]);
   const endEncounter = useCallback(() => {
-    change((value) => ({ ...value, encounter: null }));
+    change((value) => ({ ...value, animations: [], encounter: null, pending: [] }));
   }, [change]);
   const completeAnimation = useCallback(() => {
-    change((value) => ({ ...value, animations: value.animations.slice(1) }));
+    change((value) => {
+      const event = value.animations[0];
+      return event?.stage === "casting" ? resolveCastEvent(value, event) : value;
+    });
   }, [change]);
   useEffect(() => {
-    const timer = window.setInterval(() => change(advanceCombatTurn), 5000);
+    const timer = window.setInterval(() => {
+      change((value) => value.encounter ? value : advanceCombatTurn(value));
+    }, 10_000);
     return () => window.clearInterval(timer);
   }, [change]);
   const animation = state.animations[0];
-  return <Context.Provider value={{ state, register, update, cast, beginEncounter, endEncounter }}>
+  useEffect(() => {
+    if (animation?.stage !== "resolved") return;
+    const timer = window.setTimeout(() => {
+      change((value) => value.animations[0]?.id === animation.id
+        ? { ...value, animations: value.animations.slice(1) }
+        : value);
+    }, 1_000);
+    return () => window.clearTimeout(timer);
+  }, [animation, change]);
+  return <Context.Provider value={{ state, register, update, cast, beginEncounter, enemyTurn, endEncounter }}>
     {children}
-    {animation && <SpellCastAnimation key={animation.id} spell={getSpellDefinition(animation.spellId)} onComplete={completeAnimation} />}
+    {animation?.stage === "casting" && <SpellCastAnimation key={animation.id} spell={getSpellDefinition(animation.spellId)} onComplete={completeAnimation} />}
   </Context.Provider>;
 }
 

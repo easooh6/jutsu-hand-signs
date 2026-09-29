@@ -184,7 +184,7 @@
       "castSoundSrc": "/audio/spells/sand_215006__stevemeli__flowing-sand_01.ogg",
       "id": "gas_attack",
       "name": "GAS ATTACK",
-      "description": "Poisons everyone, including the caster. Dog / Dog / Dog.",
+      "description": "Poisons everyone, including the caster.",
       "spriteSrc": "/spells/gas_attack.png",
       "iconFrame": 5,
       "columns": 5,

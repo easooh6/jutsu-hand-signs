@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { useCombatActor, useCombatStore } from "@/components/combat/CombatProvider";
 import { canAct } from "@/components/combat/runtime";
+import { useScreenTransition } from "@/components/screen-transition";
 import type { CSSProperties } from "react";
 import type { GameMap, MapActorSpawn } from "../map/types";
 import { Actor } from "./Actor";
@@ -92,8 +94,13 @@ function SpawnedActor({
 }: SpawnedActorProps) {
   const definition = getActorDefinition(spawn.actorId);
   const { actor } = useCombatActor(`npc:${mapId}:${spawn.instanceId}`, definition);
-  const { beginEncounter } = useCombatStore();
-  const onContact = useCallback(() => beginEncounter(playerId, `npc:${mapId}:${spawn.instanceId}`, definition.spellIds), [beginEncounter, playerId, mapId, spawn.instanceId, definition.spellIds]);
+  const { beginEncounter, state } = useCombatStore();
+  const { runBattleTransition } = useScreenTransition();
+  const onContact = useCallback(() => {
+    void runBattleTransition(() => {
+      beginEncounter(playerId, `npc:${mapId}:${spawn.instanceId}`, definition.id, definition.spellIds);
+    });
+  }, [beginEncounter, playerId, mapId, spawn.instanceId, definition.id, definition.spellIds, runBattleTransition]);
   const controller = useMemo(
     () =>
       createAIController({
@@ -103,14 +110,14 @@ function SpawnedActor({
   );
   const movement = useActorMovement({
     controller,
-    enabled: canAct(actor),
+    enabled: canAct(actor) && state.encounter === null,
     initialDirection: spawn.direction,
     initialPosition: { x, y },
     map,
     stepDuration: definition.moveDuration,
   });
   useAIBehavior({
-    enabled: canAct(actor),
+    enabled: canAct(actor) && state.encounter === null,
     onContact,
     controller,
     map,
@@ -127,6 +134,26 @@ function SpawnedActor({
     () => () => onPositionChange(spawn.instanceId, null),
     [onPositionChange, spawn.instanceId],
   );
+  if (actor.health <= 0) {
+    const positionStyle: CSSProperties = {
+      left: (movement.position.x + 0.5) * map.tileSize,
+      top: (movement.position.y + 1) * map.tileSize,
+      zIndex: movement.position.y + 1,
+    };
+    return (
+      <div className={`${styles.spawn} ${styles.dead}`} style={positionStyle}>
+        <Image
+          alt={`${definition.name} dead`}
+          className={styles.deadSprite}
+          height={definition.deadSpriteSize.height}
+          src={definition.deadSpriteSrc}
+          unoptimized
+          width={definition.deadSpriteSize.width}
+        />
+      </div>
+    );
+  }
+
   return (
     <PositionedActor
       friendly={controller.friendly}

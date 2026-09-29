@@ -1,0 +1,161 @@
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  background:
+    linear-gradient(rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.68)),
+    #050505 url("/bg/floor1.png") center / cover no-repeat;
+  image-rendering: pixelated;
+}
+
+.scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 48%, transparent 28%, rgb(0 0 0 / 0.72) 100%);
+}
+
+.player,
+.enemy {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+}
+
+.miss {
+  position: absolute;
+  z-index: 5;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  letter-spacing: 0.12em;
+  text-shadow: 3px 3px #000, 0 0 10px #fff;
+  pointer-events: none;
+  animation: miss-message 1s steps(8, end) both;
+}
+
+.player {
+  left: 34%;
+  top: 64%;
+}
+
+.enemy {
+  left: 68%;
+  top: 38%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(13rem, 27vw, 25rem);
+  height: clamp(13rem, 38vh, 25rem);
+}
+
+.enemyArt {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(12px 16px 6px rgb(0 0 0 / 0.82));
+}
+
+.playerHit,
+.enemyHit .enemyArt {
+  animation: spell-damage-flash 500ms steps(4, end);
+}
+
+.enemyInfo {
+  position: absolute;
+  z-index: 3;
+  top: calc(100% + 0.75rem);
+  left: 50%;
+  width: min(20rem, 55vw);
+  transform: translateX(-50%);
+  color: #eee6c7;
+  text-align: center;
+  text-shadow: 2px 2px #000;
+}
+
+.enemyName {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+}
+
+.enemyStatuses {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-bottom: 0.35rem;
+}
+
+.statusIcon {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.health {
+  position: relative;
+  height: 1.65rem;
+  border: 3px solid #cfc7a7;
+  background: #10090a;
+  box-shadow: 4px 4px #000;
+}
+
+.healthFill {
+  height: 100%;
+  background: #8c282b;
+  transition: width 180ms steps(6, end);
+}
+
+.healthText {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+}
+
+.turn {
+  position: absolute;
+  z-index: 3;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #eee6c7;
+  font-size: clamp(1rem, 2vw, 1.45rem);
+  text-shadow: 3px 3px #000;
+}
+
+@keyframes spell-damage-flash {
+  0%, 24%, 50%, 74% {
+    filter: brightness(3.5) saturate(0) drop-shadow(0 0 18px #fff);
+  }
+  12%, 37%, 62%, 100% {
+    filter: none;
+  }
+}
+
+@keyframes miss-message {
+  0% { opacity: 0; transform: translate(-50%, 0.5rem); }
+  12%, 72% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -1rem); }
+}
+
+@media (max-width: 700px) {
+  .player { left: 27%; top: 62%; transform: translate(-50%, -50%) scale(0.72); }
+  .enemy { left: 72%; top: 35%; width: 12rem; height: 12rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playerHit,
+  .enemyHit .enemyArt { animation-timing-function: linear; }
+}

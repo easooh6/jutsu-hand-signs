@@ -6,4 +6,4 @@ export {
   readCharacterChoice,
   saveCharacterChoice,
 } from "./selection";
-export type { CharacterDefinition } from "./types";
+export type { CharacterDefinition, CharacterId } from "./types";

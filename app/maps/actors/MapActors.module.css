@@ -17,6 +17,15 @@
   image-rendering: pixelated;
 }
 
+.dead {
+  transition: none;
+}
+
+.deadSprite {
+  display: block;
+  image-rendering: pixelated;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .spawn {
     transition: none;

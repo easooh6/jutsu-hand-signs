@@ -109,7 +109,11 @@
       null,
       null,
       null,
-      null,
+      {
+        "actorId": "blackangel",
+        "direction": "down",
+        "instanceId": "064905ea-858c-450e-b25f-b77804fa9fb8"
+      },
       null,
       null,
       null,
@@ -1398,17 +1402,50 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1430,17 +1467,50 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1462,17 +1532,50 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1494,17 +1597,50 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1526,17 +1662,50 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1558,17 +1727,50 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -1590,17 +1792,50 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
+      {
+        "index": 0,
+        "sheet": "floor_1"
+      },
       null,
       null,
       null,
@@ -2098,6 +2333,50 @@
       null,
       null,
       null,
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
       null,
       null,
       null,
@@ -2109,7 +2388,511 @@
       null,
       null,
       null,
+      null
+    ],
+    [
       null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 0,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 1,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 2,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 3,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 4,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 5,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 6,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 7,
+        "sheet": "wall_1"
+      },
+      {
+        "index": 8,
+        "sheet": "wall_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      null,
+      null,
+      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
       null,
       null,
       null,
@@ -2133,331 +2916,17 @@
       null,
       null,
       null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
       null,
       null,
       null,
@@ -2516,7 +2985,10 @@
       null,
       null,
       null,
-      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
       null,
       null,
       null,
@@ -2575,7 +3047,10 @@
       null,
       null,
       null,
-      null,
+      {
+        "index": 4,
+        "sheet": "door_1"
+      },
       null,
       null,
       null,
@@ -2953,41 +3428,18 @@
       null,
       null,
       null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      {
+        "index": 12,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 13,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 14,
+        "sheet": "back_overhead"
+      },
       null,
       null,
       null,
@@ -3109,6 +3561,23 @@
       null,
       null,
       null,
+      {
+        "index": 0,
+        "sheet": "back_overhead"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 8,
+        "sheet": "back_overhead"
+      },
       null,
       null,
       null,
@@ -3120,7 +3589,43 @@
       null,
       null,
       null,
+      null
+    ],
+    [
       null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 9,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 10,
+        "sheet": "back_overhead"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "index": 16,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 17,
+        "sheet": "back_overhead"
+      },
+      {
+        "index": 17,
+        "sheet": "back_overhead"
+      },
       null,
       null,
       null,

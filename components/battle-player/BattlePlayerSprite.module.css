@@ -1,0 +1,15 @@
+.sprite {
+  display: block;
+  width: var(--battle-player-width);
+  height: var(--battle-player-height);
+  flex: none;
+  background-image: var(--battle-player-image);
+  background-repeat: no-repeat;
+  background-position: var(--battle-player-x) var(--battle-player-y);
+  background-size: 900% 300%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+  user-select: none;
+}
+

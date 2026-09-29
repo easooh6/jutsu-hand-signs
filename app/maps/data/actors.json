@@ -2,12 +2,15 @@
   "actors": [
     {
       "battleEnterSound": "/audio/actors/guard_growl1.ogg",
+      "battleSpriteSize": { "width": 354, "height": 325 },
+      "deadSpriteSrc": "/dead_enemies/guard_dead.png",
+      "deadSpriteSize": { "width": 80, "height": 110 },
       "friendly": false,
       "health": 500,
       "iconSrc": "/characters/guard1.png",
       "id": "guard1",
       "immunities": [],
-      "modifiers": { "accuracy": -25, "resistance": 20, "evasion": -10 },
+      "modifiers": { "accuracy": 10, "resistance": 20, "evasion": -10 },
       "passives": [{ "type": "castStatuses", "chance": 0.25, "statuses": ["stunned"] }],
       "moveDuration": 320,
       "name": "Guard",
@@ -16,6 +19,9 @@
     },
     {
       "battleEnterSound": "/audio/actors/witch_laugh.ogg",
+      "battleSpriteSize": { "width": 237, "height": 305 },
+      "deadSpriteSrc": "/dead_enemies/black_angel_dead.png",
+      "deadSpriteSize": { "width": 80, "height": 110 },
       "friendly": false,
       "health": 700,
       "iconSrc": "/characters/black_angel.png",
@@ -25,11 +31,14 @@
       "passives": [{ "type": "castStatuses", "chance": 0.30, "statuses": ["poisoned"] }],
       "moveDuration": 480,
       "name": "Black Angel",
-      "spellIds": ["poison_cloud", "gas_attack", "hatchet", "horizontal_slash", "hurting", "torrent"],
+      "spellIds": ["poison_cloud", "gas_attack", "hatchet", "horizontal_slash", "hurting", "torrent", "solace"],
       "walkSpriteSrc": "/walk/$black_angel2.png"
     },
     {
       "battleEnterSound": "/audio/actors/guard_freakout.ogg",
+      "battleSpriteSize": { "width": 412, "height": 343 },
+      "deadSpriteSrc": "/dead_enemies/iron_shakespeare_dead.png",
+      "deadSpriteSize": { "width": 189, "height": 148 },
       "friendly": false,
       "health": 1200,
       "iconSrc": "/characters/iron_shakespere.png",

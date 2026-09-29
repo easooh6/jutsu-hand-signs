@@ -4,6 +4,11 @@ import { useEffect } from "react";
 import { playOneShot } from "./playOneShot";
 
 const INTERACTIVE_SELECTOR = 'button, a, [role="button"]';
+const SILENT_PATHS = ["/maps/editor"];
+
+function isUiAudioDisabled() {
+  return SILENT_PATHS.some((path) => window.location.pathname.startsWith(path));
+}
 
 function findInteractiveTarget(target: EventTarget | null) {
   return target instanceof Element
@@ -14,6 +19,7 @@ function findInteractiveTarget(target: EventTarget | null) {
 export function UiAudio() {
   useEffect(() => {
     function handlePointerOver(event: PointerEvent) {
+      if (isUiAudioDisabled()) return;
       const interactive = findInteractiveTarget(event.target);
       if (!interactive) return;
 
@@ -28,6 +34,7 @@ export function UiAudio() {
     }
 
     function handleClick(event: MouseEvent) {
+      if (isUiAudioDisabled()) return;
       if (!findInteractiveTarget(event.target)) return;
       playOneShot("/audio/ui/fnh_choice2.ogg");
     }

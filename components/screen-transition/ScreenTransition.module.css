@@ -17,8 +17,35 @@
   pointer-events: auto;
 }
 
+.overlayInstant {
+  transition: none;
+}
+
+.flash {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flashActive {
+  animation: battle-flash 260ms linear both;
+}
+
+@keyframes battle-flash {
+  0% { opacity: 0; }
+  28% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .overlay {
     transition-duration: 1ms;
+  }
+
+  .flashActive {
+    animation-duration: 80ms;
   }
 }

@@ -1,0 +1,458 @@
+/* =========================================
+   TUTORIAL
+   Dark Dungeon / Pixel RPG
+   ========================================= */
+
+.tutorial-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 28px 40px;
+
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      #25201b 0%,
+      #151311 45%,
+      #0b0a09 100%
+    );
+
+  color: #e8dfcf;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  overflow: hidden;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.tutorial-page > .tutorial-content::before {
+  content: "JUTSU TRAINING";
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #c99b55;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  letter-spacing: 4px;
+}
+
+
+/* =========================================
+   MAIN CONTENT
+   ========================================= */
+
+.tutorial-page {
+  position: relative;
+}
+
+.tutorial-page::before {
+  content: "";
+
+  position: absolute;
+  inset: 12px;
+
+  pointer-events: none;
+
+  border: 2px solid #393129;
+
+  box-shadow:
+    inset 0 0 0 1px #11100f,
+    0 0 0 1px #080807;
+}
+
+
+/* =========================================
+   CAMERA
+   ========================================= */
+
+.tutorial-camera {
+  position: absolute;
+
+  left: 40px;
+  bottom: 40px;
+
+  width: 300px;
+  height: 225px;
+
+  background: #11100e;
+
+  border: 3px solid #4a4034;
+
+  box-shadow:
+    inset 0 0 0 2px #1d1915,
+    0 8px 25px rgba(0, 0, 0, 0.6);
+
+  padding: 6px;
+
+  z-index: 2;
+}
+
+.tutorial-camera::before {
+  content: "CAMERA";
+
+  position: absolute;
+
+  top: -27px;
+  left: -3px;
+
+  padding: 5px 10px;
+
+  background: #211c17;
+
+  border: 2px solid #4a4034;
+
+  color: #8e795c;
+
+  font-size: 11px;
+  font-weight: bold;
+
+  letter-spacing: 2px;
+}
+
+.tutorial-camera video {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  background: #050505;
+
+  image-rendering: pixelated;
+}
+
+
+/* =========================================
+   CONTENT PANEL
+   ========================================= */
+
+.tutorial-content {
+  width: min(650px, 90vw);
+
+  min-height: 500px;
+
+  margin-left: auto;
+  margin-right: 9vw;
+
+  padding: 42px 55px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #25201b,
+      #181512
+    );
+
+  border: 4px solid #4a4034;
+
+  box-shadow:
+    inset 0 0 0 2px #100f0d,
+    inset 0 0 35px rgba(0, 0, 0, 0.45),
+    0 15px 45px rgba(0, 0, 0, 0.6);
+
+  position: relative;
+
+  z-index: 1;
+}
+
+
+/* Inner dungeon frame */
+
+.tutorial-content::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 10px;
+
+  pointer-events: none;
+
+  border: 1px solid #302921;
+}
+
+
+/* =========================================
+   TITLE
+   ========================================= */
+
+.tutorial-content h1 {
+  margin: 0 0 35px;
+
+  color: #d1a45d;
+
+  font-size: 30px;
+  font-weight: bold;
+
+  letter-spacing: 5px;
+
+  text-transform: uppercase;
+
+  text-shadow:
+    2px 2px 0 #0b0a09;
+}
+
+
+/* =========================================
+   STEP TITLE
+   ========================================= */
+
+.tutorial-content h2 {
+  margin: 5px 0 18px;
+
+  color: #e3c080;
+
+  font-size: 24px;
+
+  letter-spacing: 3px;
+
+  text-transform: uppercase;
+
+  text-shadow:
+    2px 2px 0 #0b0a09;
+}
+
+
+/* =========================================
+   DESCRIPTION
+   ========================================= */
+
+.tutorial-content p {
+  margin: 8px 0;
+
+  max-width: 500px;
+
+  color: #aaa093;
+
+  font-size: 15px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================
+   SEAL IMAGE
+   ========================================= */
+
+.tutorial-seal-image {
+  display: block;
+
+  width: 240px;
+  height: 240px;
+
+  object-fit: contain;
+
+  margin: 18px auto;
+
+  padding: 12px;
+
+  box-sizing: border-box;
+
+  background: #0d0c0a;
+
+  border: 3px solid #4a4034;
+
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.7),
+    0 8px 20px rgba(0, 0, 0, 0.5);
+
+  image-rendering: pixelated;
+}
+
+
+/* =========================================
+   BUTTON
+   ========================================= */
+
+.tutorial-content button {
+  margin-top: 25px;
+
+  padding: 13px 28px;
+
+  background: #29221a;
+
+  border: 3px solid #725b3d;
+
+  color: #d7b477;
+
+  font-family: "Courier New", monospace;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  box-shadow:
+    3px 3px 0 #0b0a09;
+
+  transition:
+    background 0.15s,
+    transform 0.15s,
+    color 0.15s;
+}
+
+.tutorial-content button:hover {
+  background: #3a2e21;
+
+  color: #f0ce91;
+
+  transform: translate(-1px, -1px);
+}
+
+.tutorial-content button:active {
+  transform: translate(2px, 2px);
+
+  box-shadow:
+    1px 1px 0 #0b0a09;
+}
+
+.tutorial-content button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =========================================
+   SUCCESS
+   ========================================= */
+
+.tutorial-success {
+  min-height: 400px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation:
+    tutorial-success-in
+    0.2s ease-out;
+}
+
+.tutorial-success h2 {
+  margin: 0;
+
+  color: #d8b46e;
+
+  font-size: 30px;
+
+  letter-spacing: 3px;
+
+  text-shadow:
+    0 0 15px rgba(201, 155, 85, 0.35),
+    3px 3px 0 #0b0a09;
+}
+
+
+/* =========================================
+   DETECTED STATE
+   ========================================= */
+
+.tutorial-content p:last-child {
+  color: #776b5c;
+
+  font-size: 12px;
+
+  letter-spacing: 1px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 1000px) {
+  .tutorial-page {
+    padding: 25px;
+  }
+
+  .tutorial-camera {
+    position: relative;
+
+    left: auto;
+    bottom: auto;
+
+    width: 280px;
+    height: 210px;
+
+    margin: 0 auto 35px;
+  }
+
+  .tutorial-content {
+    margin: 0 auto;
+
+    width: min(650px, 95vw);
+  }
+}
+
+
+@media (max-width: 600px) {
+  .tutorial-page {
+    padding: 20px;
+  }
+
+  .tutorial-content {
+    padding: 35px 25px;
+  }
+
+  .tutorial-content h1 {
+    font-size: 23px;
+  }
+
+  .tutorial-content h2 {
+    font-size: 19px;
+  }
+
+  .tutorial-seal-image {
+    width: 200px;
+    height: 200px;
+  }
+
+  .tutorial-camera {
+    width: 240px;
+    height: 180px;
+  }
+}
+
+
+/* =========================================
+   ANIMATION
+   ========================================= */
+
+@keyframes tutorial-success-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

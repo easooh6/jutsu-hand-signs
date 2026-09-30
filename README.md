@@ -61,27 +61,35 @@ Before running the project, make sure you have:
 * A working webcam
 * A modern browser
 * Camera permissions enabled
-
 ## Installation
 
-Clone the repository:
+Clone the repository and switch to the `merge` branch:
 
 ```bash
 git clone https://github.com/easooh6/jutsu-hand-signs.git
 cd jutsu-hand-signs
-```
-
-Switch to the `merge` branch:
-
-```bash
 git checkout merge
 ```
 
-Install dependencies:
+Install the project dependencies:
 
 ```bash
-npm install
+npm run install:ci
 ```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+After that, open the address shown in the terminal in your browser.
+
+Make sure that:
+
+* a webcam is connected;
+* the browser has permission to access the camera;
+* a modern browser such as Chrome or Edge is used.
 
 ## Run the Game
 

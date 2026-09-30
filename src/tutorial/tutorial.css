@@ -484,3 +484,17 @@
 .advice-debug strong {
   color: #fff;
 }
+
+.tutorial-advice {
+  margin-top: 14px !important;
+
+  color: #d1a45d !important;
+
+  font-size: 14px !important;
+  font-weight: bold;
+
+  letter-spacing: 1px;
+
+  text-shadow:
+    1px 1px 0 #0b0a09;
+}

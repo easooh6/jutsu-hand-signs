@@ -67,7 +67,7 @@
 // }
 
 // export default App;
-import TutorialPage  from "./tutorial/TutorialPage";
+import {TutorialPage}  from "./tutorial/TutorialPage";
 
 function App() {
   return <TutorialPage />;

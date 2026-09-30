@@ -2,17 +2,23 @@
 
 A browser-based hand gesture recognition system inspired by Naruto hand seals.
 
-The project uses a webcam and MediaPipe Hand Landmarker to recognize Naruto hand seals and control movement using one hand.
+This branch contains the main computer-vision and hand-tracking implementation of the project. It uses a webcam and MediaPipe Hand Landmarker to recognize hand movements and Naruto hand signs.
 
 ## Features
 
 * Real-time hand tracking through a webcam
-* Recognition of Naruto hand seals
+* MediaPipe Hand Landmarker integration
+* Detection of up to two hands
+* Finger position and state analysis
+* Palm position and orientation analysis
+* Recognition of Naruto hand signs
 * Stable gesture detection using consecutive frames
 * One-hand movement control
 * Fist gesture for confirmation
-* Movement recalibration
-* Support for two-hand Naruto seals
+* Movement calibration and recalibration
+* Two-hand Naruto seal recognition
+* Tutorial for learning the controls and hand signs
+* Advice system for incorrect hand positions
 * Separation of continuous movement states and one-shot events
 
 ## Tech Stack
@@ -27,7 +33,7 @@ The project uses a webcam and MediaPipe Hand Landmarker to recognize Naruto hand
 
 * Node.js 18+
 * npm
-* A webcam
+* Webcam
 * Modern browser with camera access
 * GPU acceleration is recommended for MediaPipe
 
@@ -38,6 +44,12 @@ Clone the repository:
 ```bash
 git clone https://github.com/easooh6/jutsu-hand-signs.git
 cd jutsu-hand-signs
+```
+
+Make sure you are using the `dev` branch:
+
+```bash
+git checkout dev
 ```
 
 Install dependencies:
@@ -52,52 +64,69 @@ Start the development server:
 npm run dev
 ```
 
-Open the address shown by Vite, usually:
+Vite will show a local address in the terminal, usually:
 
 ```text
 http://localhost:5173
 ```
 
-Allow the browser to access the webcam.
+Open this address in a browser and allow access to the webcam.
 
 ## Production Build
 
-Create a production build:
+To create a production build:
 
 ```bash
 npm run build
 ```
 
-Preview the production build locally:
+To preview the production build locally:
 
 ```bash
 npm run preview
 ```
 
-## How It Works
+## How the System Works
 
-The application uses MediaPipe Hand Landmarker to detect hand landmarks from the webcam.
+The application uses MediaPipe Hand Landmarker to process the webcam video.
 
-The landmarks are converted into a `HandPose`, which contains:
+For every detected hand, MediaPipe provides 21 landmark points representing important parts of the hand, including the wrist, finger joints, and fingertips.
+
+The application converts these landmarks into its own hand representation containing information such as:
 
 * finger states
 * palm center
-* palm direction
-* palm normal
+* palm size
+* palm orientation
 * hand side (`Left` / `Right`)
 
-The application then uses this information for movement, confirmation, and Naruto seal recognition.
+This information is then used for movement detection and Naruto hand-sign recognition.
 
-### One Hand
+The general processing pipeline is:
 
-When only one hand is detected, the right hand is used for:
+```text
+Webcam
+   ↓
+MediaPipe Hand Landmarker
+   ↓
+21 hand landmarks
+   ↓
+HandPose
+   ↓
+Finger and palm analysis
+   ↓
+Hand-sign recognition
+   ↓
+Tutorial / Game input
+```
 
-* movement
-* confirmation
+## One-Hand Movement
 
-Movement is determined from the palm center relative to the calibrated neutral position.
+When one hand is detected, the right hand is used for movement control and confirmation.
 
-Available movement states:
+Movement is determined from the palm position relative to the calibrated neutral position.
+
+Possible movement states are:
 
 ```text
 left
@@ -108,26 +137,13 @@ idle
 preparing
 ```
 
-### Two Hands
-
-When two hands are detected, movement and confirmation are disabled.
-
-The system switches to Naruto seal recognition.
-
-Currently supported seals:
-
-```text
-tiger
-dog
-boar
-horse
-```
+The system uses basic geometric calculations such as distances, positions and angles to determine the current movement.
 
 ## Movement Calibration
 
 When the hand controller starts, it performs an initial calibration.
 
-The first **2 seconds** are used to determine the neutral hand position.
+The first two seconds are used to determine the user's neutral hand position.
 
 During this period the movement state is:
 
@@ -135,114 +151,39 @@ During this period the movement state is:
 preparing
 ```
 
-After calibration, the average hand position becomes:
+After calibration, the average hand position becomes the neutral position.
+
+Movement is then calculated relative to this position.
+
+The main movement parameters are defined in:
 
 ```text
-neutralX
-neutralY
+src/gestures/handController.ts
 ```
-
-Movement is calculated relative to this position.
-
-## Movement Parameters
-
-The main movement parameters are defined in `handController.ts`.
-
-### Movement threshold
-
-```ts
-const MOVEMENT_THRESHOLD = 0.12;
-```
-
-This determines how far the hand must move from the neutral position before movement is detected.
-
-Increasing it:
-
-```text
-0.12 → 0.18
-```
-
-makes movement less sensitive.
-
-Decreasing it:
-
-```text
-0.12 → 0.08
-```
-
-makes movement more sensitive.
-
-### Dead zone
-
-```ts
-const DEAD_ZONE = 0.05;
-```
-
-The dead zone prevents small hand movements and tracking noise from being interpreted as movement.
-
-### Neutral adaptation
-
-```ts
-const NEUTRAL_ADAPTATION = 0.02;
-```
-
-When the hand is inside the dead zone, the neutral position slowly follows the hand.
-
-This compensates for small natural changes in the user's position.
-
-### Initial calibration time
-
-```ts
-const PREPARATION_TIME = 2000;
-```
-
-The initial neutral position is calculated during this period.
-
-The value is specified in milliseconds.
 
 ## Movement Recalibration
 
-The movement controller supports manual recalibration.
+The system also supports manual recalibration.
 
-From `GameScreen`:
+Recalibration can be triggered with:
 
-```ts
-const {
-  recalibrate,
-} = useHandTracking();
-```
-
-Then call:
-
-```ts
+```tsx
 recalibrate();
 ```
 
-The system collects hand coordinates for:
-
-```ts
-const RECALIBRATION_TIME = 1500;
-```
-
-After that, the average position becomes the new neutral position.
+The controller collects the current hand position for a short period and uses the average position as the new neutral position.
 
 This is useful when:
 
-* the user changes their position
-* the camera moves
-* the user wants to change the default hand position
-
-During recalibration the movement state is:
-
-```text
-preparing
-```
+* the user changes their position;
+* the camera moves;
+* the user wants to change the default hand position.
 
 ## Confirmation Gesture
 
 A fist is used as a confirmation gesture.
 
-The confirmation is detected when all four tracked fingers are bent:
+The system checks the state of the four tracked fingers:
 
 ```text
 index   → bent
@@ -251,29 +192,38 @@ ring    → bent
 pinky   → bent
 ```
 
-The fist must remain stable for:
+The fist has to remain stable for several consecutive frames before a confirmation event is generated.
 
-```ts
-const REQUIRED_FIST_FRAMES = 5;
+The event is generated only once. Holding the fist does not continuously generate confirmation events.
+
+## Two-Hand Naruto Seals
+
+When two hands are detected, the system switches from movement control to Naruto hand-sign recognition.
+
+Currently supported seals include:
+
+```text
+tiger
+dog
+boar
+horse
 ```
 
-The event is generated only once.
+The recognition uses several characteristics of both hands:
 
-Holding the fist does not continuously generate confirmation events.
+* finger configuration;
+* palm position;
+* distance between the hands;
+* relative position of the hands;
+* palm orientation.
 
-When the fist is released and formed again, another confirmation can be generated.
+Basic vector and geometric calculations are used to compare the detected hand configuration with the required configuration of each seal.
 
 ## Naruto Seal Stabilization
 
-Naruto seals are also stabilized using consecutive frames.
+Camera tracking is not perfectly stable. Even when the user keeps their hands still, the detected landmark positions can change slightly between frames.
 
-The current configuration requires:
-
-```ts
-const REQUIRED_SEAL_FRAMES = 5;
-```
-
-A seal must therefore be detected for five consecutive frames before it becomes a confirmed event.
+To prevent accidental recognition, a seal has to be detected for several consecutive frames before it becomes a confirmed event.
 
 For example:
 
@@ -284,54 +234,84 @@ Frame 3 → Tiger
 Frame 4 → Tiger
 Frame 5 → Tiger
            ↓
-       Tiger event
+      Tiger event
 ```
 
-If another gesture appears before five consecutive frames:
+If a different gesture appears before the required number of consecutive frames, the current candidate is reset.
+
+## Tutorial
+
+The branch contains a complete tutorial for learning the controls.
+
+The tutorial starts with calibration and then teaches basic hand movements:
 
 ```text
-Tiger
-Tiger
-Unknown
-Tiger
+Move left
+Move right
+Move up
+Move down
 ```
 
-the candidate is reset.
+After the movement section, the user learns the Naruto hand signs.
 
-This prevents accidental events caused by MediaPipe landmark jitter.
+The current sequence is:
+
+```text
+Tiger → Dog → Boar → Horse
+```
+
+The sequence is strict.
+
+If the tutorial expects Tiger and the user performs Dog, the tutorial does not move forward. It continues waiting for the required sign.
+
+## Advice System
+
+The tutorial also contains an advice system.
+
+Instead of simply telling the user that a sign is incorrect, the system analyzes the current hand configuration and provides information about the detected problem.
+
+Possible advice includes:
+
+* move the hands closer together;
+* move the hands further apart;
+* adjust the hand position;
+* correct the finger configuration;
+* correct the palm orientation;
+* use both hands;
+* perform the expected seal.
+
+The advice is stabilized over several frames to prevent the message from constantly changing because of small MediaPipe tracking variations.
 
 ## Events
 
-The hook separates continuous movement from one-shot events.
+The hand-tracking system separates continuous states from one-shot events.
 
-Movement:
+Movement is represented by:
 
-```ts
+```text
 movement
 ```
 
-represents the current continuous state.
+It describes the current continuous movement state.
 
-Events:
+A gesture event is represented by:
 
-```ts
+```text
 event
 ```
 
-represent an action that happened once.
+Possible events include:
 
-Possible events:
-
-```ts
+```text
 {
   type: "confirm",
   id: number
 }
 ```
 
-or:
+and:
 
-```ts
+```text
 {
   type: "seal",
   seal: "tiger" | "dog" | "boar" | "horse",
@@ -339,48 +319,9 @@ or:
 }
 ```
 
-The `id` changes every time a new event is generated.
+The event ID changes every time a new event is generated.
 
-This makes it possible for the game logic to react to an event without repeatedly processing the same gesture.
-
-## Example
-
-A game can listen for the next required seal:
-
-```ts
-const sequence = [
-  "tiger",
-  "dog",
-  "horse",
-];
-
-const [currentStep, setCurrentStep] =
-  useState(0);
-```
-
-Then:
-
-```ts
-useEffect(() => {
-  if (!event) {
-    return;
-  }
-
-  if (event.type !== "seal") {
-    return;
-  }
-
-  if (
-    event.seal === sequence[currentStep]
-  ) {
-    setCurrentStep(
-      (step) => step + 1
-    );
-  }
-}, [event, currentStep]);
-```
-
-If the user performs the wrong seal, nothing happens and the application continues waiting for the required seal.
+This allows other parts of the application to react to an event only once instead of processing the same gesture repeatedly.
 
 ## Project Structure
 
@@ -402,34 +343,39 @@ src/
 │   ├── WelcomeScreen.tsx
 │   └── GameScreen.tsx
 │
+├── tutorial/
+│   ├── TutorialPage.tsx
+│   ├── tutorialController.ts
+│   └── tutorial.css
+│
 └── App.tsx
 ```
 
 ## Main Components
 
-### `useHandTracking`
+### `useHandTracking.ts`
 
 Responsible for:
 
-* initializing MediaPipe
-* accessing the webcam
-* processing video frames
-* detecting hands
-* creating hand poses
-* movement detection
-* confirmation detection
-* Naruto seal detection
-* movement recalibration
+* initializing MediaPipe;
+* accessing the webcam;
+* processing video frames;
+* detecting hands;
+* creating hand poses;
+* movement detection;
+* confirmation detection;
+* Naruto seal detection;
+* movement recalibration.
 
 ### `handController.ts`
 
 Responsible for one-hand movement:
 
-* initial calibration
-* movement detection
-* dead zone
-* neutral adaptation
-* recalibration
+* initial calibration;
+* movement detection;
+* dead zone;
+* neutral adaptation;
+* recalibration.
 
 ### `confirmController.ts`
 
@@ -437,41 +383,26 @@ Responsible for fist confirmation.
 
 ### `narutoSeals.ts`
 
-Contains the recognition rules for individual Naruto seals.
+Contains recognition rules for the supported Naruto seals.
 
 ### `gestureDetector.ts`
 
-Converts MediaPipe landmarks into `HandPose` and `TwoHandPose`.
+Converts MediaPipe landmarks into the internal hand representation used by the recognition system.
 
-## Adding a New Naruto Seal
+### `TutorialPage.tsx`
 
-Create a new seal in:
+Provides the user-facing tutorial and combines:
 
-```text
-src/gestures/narutoSeals.ts
-```
-
-A seal has the following structure:
-
-```ts
-export const exampleSeal: NarutoSeal = {
-  name: "Example",
-  tip: "Example seal",
-
-  check: (pose) => {
-    // recognition conditions
-    return true;
-  },
-};
-```
-
-Then import it into `useHandTracking.ts` and add it to the detection order.
-
-The corresponding event should use a value from `SealName`.
+* calibration;
+* movement training;
+* seal training;
+* strict seal progression;
+* recognition feedback;
+* advice.
 
 ## Browser Permissions
 
-The application requires camera access.
+The application requires webcam access.
 
 If the camera does not start:
 
@@ -480,38 +411,36 @@ If the camera does not start:
 3. Reload the page.
 4. Check the browser console for errors.
 
-The application uses:
+The application uses the browser Web Camera API:
 
-```ts
+```text
 navigator.mediaDevices.getUserMedia()
 ```
 
-to access the camera.
-
 ## Notes
 
-The recognition system works with normalized MediaPipe coordinates.
+The recognition system uses normalized MediaPipe coordinates.
 
-Because the application uses a front-facing camera, horizontal movement is intentionally inverted:
+Recognition can be affected by:
 
-```text
-hand moves visually left  → left
-hand moves visually right → right
+* camera position;
+* lighting;
+* distance from the camera;
+* hand size;
+* camera resolution.
+
+The recognition thresholds can therefore be adjusted depending on the environment.
+
+## Purpose of This Branch
+
+The `dev` branch contains the main implementation of the project's computer-vision component.
+
+It was developed as the foundation for connecting physical hand movements with the game.
+
+The full game integration is available in the `merge` branch.
+
+To try the actual game, switch to:
+
+```bash
+git checkout merge
 ```
-
-Vertical movement follows the MediaPipe coordinate system:
-
-```text
-hand moves up   → up
-hand moves down → down
-```
-
-Recognition thresholds may need to be adjusted depending on:
-
-* camera position
-* lighting
-* distance from the camera
-* user's hand size
-* camera resolution
-
-The current values are tuned for the project's webcam setup and may require adjustment for different environments.

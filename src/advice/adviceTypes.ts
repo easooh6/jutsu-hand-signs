@@ -1,3 +1,6 @@
+
+import type { HandPose } from "../gestures/types";
+
 import type { SealName } from "../hooks/useHandTracking";
 
 export type FingerName =
@@ -36,4 +39,14 @@ export type SealAdviceConfig = {
   maxDistance?: number;
   minDistance?: number;
   maxYDifference?: number;
+};
+
+export type SealSimilarity = {
+  seal: SealName;
+  score: number;
+};
+
+export type AdviceContext = {
+  expectedSeal: SealName | null;
+  hands: HandPose[];
 };

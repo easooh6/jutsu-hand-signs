@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import {
   HandLandmarker,
   FilesetResolver,
@@ -27,6 +33,8 @@ import {
   createConfirmController,
   detectConfirm,
 } from "../gestures/confirmController";
+
+import type { HandPose } from "../gestures/types";
 
 export type SealName =
   | "tiger"
@@ -61,6 +69,16 @@ export function useHandTracking() {
   const [landmarks, setLandmarks] =
     useState<any[][]>([]);
 
+  /*
+   * Current detected hands.
+   *
+   * This is used by the tutorial advice
+   * system to analyze the user's current
+   * hand positions and fingers.
+   */
+  const [hands, setHands] =
+    useState<HandPose[]>([]);
+
   const [isReady, setIsReady] =
     useState(false);
 
@@ -77,8 +95,10 @@ export function useHandTracking() {
     useState(true);
 
   const [isRecalibrating, setIsRecalibrating] =
-  useState(false);
-  const eventIdRef = useRef(0);
+    useState(false);
+
+  const eventIdRef =
+    useRef(0);
 
   /*
    * Last seal that was already emitted.
@@ -99,15 +119,23 @@ export function useHandTracking() {
    */
   const candidateSealFramesRef =
     useRef(0);
+
+  /*
+   * Currently unused, but kept here
+   * because it already existed in
+   * the original hook.
+   */
   const previousMovementRef =
     useRef<HandMovement | null>(null);
 
   const recalibrateRequestedRef =
     useRef(false);
-  
+
   function recalibrate() {
-    recalibrateRequestedRef.current = true;
+    recalibrateRequestedRef.current =
+      true;
   }
+
   useEffect(() => {
     let handLandmarker:
       | HandLandmarker
@@ -124,7 +152,7 @@ export function useHandTracking() {
 
     const confirmController =
       createConfirmController();
-    
+
     const REQUIRED_SEAL_FRAMES = 5;
 
     function emitEvent(
@@ -199,54 +227,64 @@ export function useHandTracking() {
         );
       }
     }
-function processControl(
-  hand: ReturnType<typeof detectHandPose>
-  ) {
-    if (recalibrateRequestedRef.current) {
-      setIsRecalibrating(true);
 
-      const completed =
-        recalibrateMovement(
-          movementController,
-          hand
-        );
+    function processControl(
+      hand: ReturnType<typeof detectHandPose>
+    ) {
+      if (
+        recalibrateRequestedRef.current
+      ) {
+        setIsRecalibrating(true);
 
-      setMovement("preparing");
+        const completed =
+          recalibrateMovement(
+            movementController,
+            hand
+          );
 
-      if (completed) {
-        recalibrateRequestedRef.current = false;
-        setIsRecalibrating(false);
+        setMovement("preparing");
 
-        console.log("Movement recalibrated");
+        if (completed) {
+          recalibrateRequestedRef.current =
+            false;
+
+          setIsRecalibrating(false);
+
+          console.log(
+            "Movement recalibrated"
+          );
+        }
+
+        return;
       }
 
-      return;
-    }
+      const currentMovement =
+        detectMovement(
+          hand,
+          movementController
+        );
 
-    const currentMovement =
-      detectMovement(
-        hand,
-        movementController
+      setMovement(
+        currentMovement
       );
 
-    setMovement(currentMovement);
-
-    setIsPreparing(
-      currentMovement === "preparing"
-    );
-
-    const confirmed =
-      detectConfirm(
-        hand,
-        confirmController
+      setIsPreparing(
+        currentMovement ===
+          "preparing"
       );
 
-    if (confirmed) {
-      emitEvent({
-        type: "confirm",
-      });
+      const confirmed =
+        detectConfirm(
+          hand,
+          confirmController
+        );
+
+      if (confirmed) {
+        emitEvent({
+          type: "confirm",
+        });
+      }
     }
-  }
 
     function processSeals(
       twoHandPose: ReturnType<
@@ -265,25 +303,44 @@ function processControl(
        * Determine which seal is currently
        * detected by the two hands.
        */
-      if (tigerSeal.check(twoHandPose)) {
+      if (
+        tigerSeal.check(
+          twoHandPose
+        )
+      ) {
         currentSeal = "tiger";
-      } else if (dogSeal.check(twoHandPose)) {
+      } else if (
+        dogSeal.check(
+          twoHandPose
+        )
+      ) {
         currentSeal = "dog";
-      } else if (boarSeal.check(twoHandPose)) {
+      } else if (
+        boarSeal.check(
+          twoHandPose
+        )
+      ) {
         currentSeal = "boar";
-      } else if (horseSeal.check(twoHandPose)) {
+      } else if (
+        horseSeal.check(
+          twoHandPose
+        )
+      ) {
         currentSeal = "horse";
       }
 
       /*
        * No seal detected.
        *
-       * We reset the candidate because
+       * Reset the candidate because
        * the current pose is not stable.
        */
       if (currentSeal === null) {
-        candidateSealRef.current = null;
-        candidateSealFramesRef.current = 0;
+        candidateSealRef.current =
+          null;
+
+        candidateSealFramesRef.current =
+          0;
 
         return;
       }
@@ -305,12 +362,14 @@ function processControl(
         candidateSealRef.current =
           currentSeal;
 
-        candidateSealFramesRef.current = 1;
+        candidateSealFramesRef.current =
+          1;
       }
 
       /*
-       * Wait until the same seal is detected
-       * for several consecutive frames.
+       * Wait until the same seal is
+       * detected for several consecutive
+       * frames.
        */
       if (
         candidateSealFramesRef.current <
@@ -338,9 +397,14 @@ function processControl(
     }
 
     function resetSealDetection() {
-      previousSealRef.current = null;
-      candidateSealRef.current = null;
-      candidateSealFramesRef.current = 0;
+      previousSealRef.current =
+        null;
+
+      candidateSealRef.current =
+        null;
+
+      candidateSealFramesRef.current =
+        0;
     }
 
     function predictLoop() {
@@ -362,11 +426,19 @@ function processControl(
       );
 
       /*
-       * No hands
+       * No hands.
        */
       if (
         results.landmarks.length === 0
       ) {
+        /*
+         * Clear current HandPose data.
+         *
+         * This is important for the
+         * tutorial advice system.
+         */
+        setHands([]);
+
         setMovement("idle");
 
         setIsPreparing(false);
@@ -402,10 +474,21 @@ function processControl(
         );
 
       /*
+       * Store current HandPose data.
+       *
+       * TutorialPage uses this to:
+       *
+       * - determine the attempted seal
+       * - generate advice
+       * - inspect the current fingers
+       */
+      setHands(poses);
+
+      /*
        * One hand:
        *
        * Right hand =
-       * movement + confirm
+       * movement + confirm.
        */
       if (poses.length === 1) {
         const controlHand =
@@ -425,6 +508,8 @@ function processControl(
            * It is not a control hand.
            */
           setMovement("idle");
+
+          setIsPreparing(false);
         }
 
         /*
@@ -442,7 +527,9 @@ function processControl(
        */
       if (poses.length === 2) {
         const twoHandPose =
-          detectTwoHandPose(poses);
+          detectTwoHandPose(
+            poses
+          );
 
         processSeals(
           twoHandPose
@@ -483,6 +570,15 @@ function processControl(
   return {
     videoRef,
     landmarks,
+
+    /*
+     * Current HandPose[].
+     *
+     * TutorialPage needs this for
+     * seal advice and attempt detection.
+     */
+    hands,
+
     isReady,
     error,
     movement,

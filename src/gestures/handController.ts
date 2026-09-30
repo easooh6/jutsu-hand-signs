@@ -29,10 +29,8 @@ export type MovementControllerState = {
 
 const MOVEMENT_THRESHOLD = 0.12;
 
-// Размер зоны, внутри которой рука считается неподвижной
 const DEAD_ZONE = 0.05;
 
-// Скорость адаптации нейтральной позиции
 const NEUTRAL_ADAPTATION = 0.02;
 
 const PREPARATION_TIME = 2000;
@@ -67,7 +65,8 @@ export function recalibrateMovement(
 
   if (!state.recalibrating) {
     state.recalibrating = true;
-    state.recalibrationStartTime = performance.now();
+    state.recalibrationStartTime =
+      performance.now();
 
     state.recalibrationSamplesX = 0;
     state.recalibrationSamplesY = 0;
@@ -96,6 +95,13 @@ export function recalibrateMovement(
     state.recalibrationSamplesY /
     state.recalibrationSampleCount;
 
+  /*
+   * Ручная калибровка полностью
+   * заменяет первоначальную.
+   */
+  state.initialized = true;
+  state.preparing = false;
+
   state.recalibrating = false;
 
   console.log("Recalibration completed:", {
@@ -114,18 +120,20 @@ export function detectMovement(
 
   /*
    * ============================
-   * PREPARATION
+   * INITIAL PREPARATION
    * ============================
-    */
-    if (!state.initialized) {
+   */
+
+  if (!state.initialized) {
     if (!state.preparing) {
-        state.preparing = true;
-        state.preparationStartTime =
+      state.preparing = true;
+
+      state.preparationStartTime =
         performance.now();
 
-        state.samplesX = 0;
-        state.samplesY = 0;
-        state.sampleCount = 0;
+      state.samplesX = 0;
+      state.samplesY = 0;
+      state.sampleCount = 0;
     }
 
     state.samplesX += x;
@@ -133,24 +141,31 @@ export function detectMovement(
     state.sampleCount++;
 
     const elapsed =
-        performance.now() -
-        state.preparationStartTime;
+      performance.now() -
+      state.preparationStartTime;
 
     if (elapsed < PREPARATION_TIME) {
-        return "preparing";
+      return "preparing";
     }
 
     state.neutralX =
-        state.samplesX / state.sampleCount;
+      state.samplesX /
+      state.sampleCount;
 
     state.neutralY =
-        state.samplesY / state.sampleCount;
+      state.samplesY /
+      state.sampleCount;
 
     state.initialized = true;
     state.preparing = false;
 
+    console.log("Initial preparation completed:", {
+      neutralX: state.neutralX,
+      neutralY: state.neutralY,
+    });
+
     return "idle";
-    }
+  }
 
   /*
    * ============================
@@ -158,34 +173,28 @@ export function detectMovement(
    * ============================
    */
 
-  const deltaX = x - state.neutralX;
-  const deltaY = y - state.neutralY;
+  const deltaX =
+    x - state.neutralX;
 
-  const absX = Math.abs(deltaX);
-  const absY = Math.abs(deltaY);
+  const deltaY =
+    y - state.neutralY;
+
+  const absX =
+    Math.abs(deltaX);
+
+  const absY =
+    Math.abs(deltaY);
 
   /*
    * ============================
    * DEAD ZONE
    * ============================
-   *
-   * Если рука находится рядом
-   * с нейтральной точкой —
-   * считаем, что движения нет.
    */
 
   if (
     absX < DEAD_ZONE &&
     absY < DEAD_ZONE
   ) {
-    /*
-     * Медленно двигаем neutral
-     * к текущему положению руки.
-     *
-     * Это позволяет компенсировать
-     * естественное смещение руки.
-     */
-
     state.neutralX +=
       (x - state.neutralX) *
       NEUTRAL_ADAPTATION;
@@ -199,31 +208,51 @@ export function detectMovement(
 
   /*
    * ============================
-   * MOVEMENT
+   * HORIZONTAL MOVEMENT
    * ============================
    */
 
   if (absX > absY) {
     /*
-     * ВАЖНО:
-     * X инвертирован из-за фронтальной камеры.
+     * Front camera:
+     *
+     * deltaX > 0 → physical LEFT
+     * deltaX < 0 → physical RIGHT
      */
 
-    if (deltaX > MOVEMENT_THRESHOLD) {
+    if (
+      deltaX >
+      MOVEMENT_THRESHOLD
+    ) {
       return "left";
     }
 
-    if (deltaX < -MOVEMENT_THRESHOLD) {
+    if (
+      deltaX <
+      -MOVEMENT_THRESHOLD
+    ) {
       return "right";
     }
   }
 
+  /*
+   * ============================
+   * VERTICAL MOVEMENT
+   * ============================
+   */
+
   if (absY > absX) {
-    if (deltaY > MOVEMENT_THRESHOLD) {
+    if (
+      deltaY >
+      MOVEMENT_THRESHOLD
+    ) {
       return "down";
     }
 
-    if (deltaY < -MOVEMENT_THRESHOLD) {
+    if (
+      deltaY <
+      -MOVEMENT_THRESHOLD
+    ) {
       return "up";
     }
   }

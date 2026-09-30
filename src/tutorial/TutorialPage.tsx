@@ -1,120 +1,115 @@
-import { useEffect, useRef, useState } from "react";
+
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { useHandTracking } from "../hooks/useHandTracking";
 
 import {
-  createTutorialState,
   getExpectedSeal,
   processTutorialStep,
-  type TutorialStep,
+  type TutorialState,
 } from "./tutorialController";
 
-import "./tutorial.css";
+import {
+  detectAttemptedSeal,
+  getSealAdvice,
+} from "../advice/adviceController";
 
-type SealInfo = {
-  name: string;
-  image: string;
+import {
+  createAdviceStabilizer,
+  updateAdviceStabilizer,
+} from "../advice/adviceStabilizer";
+
+const SEAL_IMAGES = {
+  tiger: "/tutorial/tiger.png",
+  dog: "/tutorial/dog.png",
+  boar: "/tutorial/boar.png",
+  horse: "/tutorial/horse.png",
 };
 
-const SEAL_INFO: Record<string, SealInfo> = {
-  tiger: {
-    name: "Tiger",
-    image: "/tutorial/tiger.png",
-  },
-
-  dog: {
-    name: "Dog",
-    image: "/tutorial/dog.png",
-  },
-
-  boar: {
-    name: "Boar",
-    image: "/tutorial/boar.png",
-  },
-
-  horse: {
-    name: "Horse",
-    image: "/tutorial/horse.png",
-  },
+const SEAL_NAMES = {
+  tiger: "Tiger",
+  dog: "Dog",
+  boar: "Boar",
+  horse: "Horse",
 };
 
-export function TutorialPage() {
+export default function TutorialPage() {
   const {
     videoRef,
     movement,
     event,
+    hands,
+    isReady,
+    error,
     isRecalibrating,
     recalibrate,
   } = useHandTracking();
 
-  /*
-   * Internal tutorial state.
-   */
-
-  const tutorialStateRef = useRef(
-    createTutorialState()
-  );
-
-  /*
-   * Current tutorial step.
-   */
-
   const [step, setStep] =
-    useState<TutorialStep>("calibration");
-
-  /*
-   * Current seal.
-   */
+    useState<TutorialState["step"]>("calibration");
 
   const [sealIndex, setSealIndex] =
     useState(0);
 
+  const [successMessage, setSuccessMessage] =
+    useState<string | null>(null);
+
+  const [calibrationStarted, setCalibrationStarted] =
+    useState(false);
+
+  const [calibrationCompleted, setCalibrationCompleted] =
+    useState(false);
+
   /*
-   * Calibration state.
+   * Used to detect the real
+   * recalibration cycle:
    *
-   * calibrationStarted:
-   * user pressed Start calibration.
-   *
-   * calibrationWasActive:
-   * recalibration actually started.
-   *
-   * We need both because otherwise
-   * the tutorial could immediately think
-   * calibration is finished before
-   * recalibrate() has started.
+   * false → true → false
    */
-
-  const [
-    calibrationStarted,
-    setCalibrationStarted,
-  ] = useState(false);
-
   const calibrationWasActiveRef =
     useRef(false);
 
   /*
-   * Success message.
+   * Tutorial controller state.
    */
+  const tutorialStateRef =
+    useRef<TutorialState>({
+      step: "calibration",
+      movementFrames: 0,
+      lastEventId: null,
+      sealIndex: 0,
+    });
 
-  const [
-    showSuccess,
-    setShowSuccess,
-  ] = useState(false);
+  /*
+   * Advice stabilizer.
+   */
+  const adviceStabilizerRef =
+    useRef(
+      createAdviceStabilizer()
+    );
 
-  const [
-    successText,
-    setSuccessText,
-  ] = useState("");
+  /*
+   * Debug information.
+   */
+  const [attemptedSeal, setAttemptedSeal] =
+    useState<string | null>(null);
 
-  const successTimeoutRef =
-    useRef<number | null>(null);
+  const [attemptedScore, setAttemptedScore] =
+    useState<number | null>(null);
+
+  const [adviceMessage, setAdviceMessage] =
+    useState<string | null>(null);
 
   /*
    * Start calibration.
    */
-
-  function handleCalibration() {
+  function handleStartCalibration() {
     setCalibrationStarted(true);
+    setCalibrationCompleted(false);
 
     calibrationWasActiveRef.current =
       false;
@@ -123,55 +118,22 @@ export function TutorialPage() {
   }
 
   /*
-   * Show temporary success message.
+   * Calibration state.
+   *
+   * We wait for:
+   *
+   * false → true → false
+   *
+   * before considering calibration complete.
    */
-
-  function showCorrect(message: string) {
-    setSuccessText(message);
-
-    setShowSuccess(true);
-
-    if (
-      successTimeoutRef.current !== null
-    ) {
-      window.clearTimeout(
-        successTimeoutRef.current
-      );
-    }
-
-    successTimeoutRef.current =
-      window.setTimeout(() => {
-        setShowSuccess(false);
-      }, 1000);
-  }
-
-  /*
-   * Calibration.
-   *
-   * IMPORTANT:
-   *
-   * We do NOT use movement === "idle"
-   * here.
-   *
-   * The calibration controller itself
-   * tells us when calibration is running
-   * and when it has finished.
-   */
-
   useEffect(() => {
-    /*
-     * Nothing to do until the user
-     * presses Start calibration.
-     */
-
     if (!calibrationStarted) {
       return;
     }
 
     /*
-     * Calibration has actually started.
+     * Recalibration has actually started.
      */
-
     if (isRecalibrating) {
       calibrationWasActiveRef.current =
         true;
@@ -180,392 +142,548 @@ export function TutorialPage() {
     }
 
     /*
-     * We only finish calibration if
-     * it was actually running before.
-     *
-     * This prevents the tutorial from
-     * immediately jumping to Move left.
+     * Recalibration has finished.
      */
-
     if (
-      !calibrationWasActiveRef.current
+      calibrationWasActiveRef.current &&
+      !isRecalibrating
+    ) {
+      calibrationWasActiveRef.current =
+        false;
+
+      setCalibrationCompleted(true);
+
+      tutorialStateRef.current.step =
+        "left";
+
+      tutorialStateRef.current.movementFrames =
+        0;
+
+      setStep("left");
+    }
+  }, [
+    isRecalibrating,
+    calibrationStarted,
+  ]);
+
+  /*
+   * Tutorial progression.
+   *
+   * IMPORTANT:
+   *
+   * `movement` can stay the same value
+   * for many camera frames.
+   *
+   * Therefore we also depend on `hands`.
+   *
+   * Every new `hands` array represents
+   * a new MediaPipe frame, allowing
+   * processTutorialStep() to count:
+   *
+   * left → frame 1
+   * left → frame 2
+   * left → frame 3
+   * left → frame 4
+   * left → frame 5
+   */
+  useEffect(() => {
+    if (
+      step === "calibration" ||
+      step === "completed"
     ) {
       return;
     }
 
-    /*
-     * Calibration is now finished.
-     */
+    const state =
+      tutorialStateRef.current;
 
-    calibrationWasActiveRef.current =
-      false;
-
-    tutorialStateRef.current.step =
-      "left";
-
-    tutorialStateRef.current.movementFrames =
-      0;
-
-    setStep("left");
-
-    showCorrect(
-      "Calibration complete!"
+    const result = processTutorialStep(
+      state,
+      movement,
+      event
     );
-  }, [
-    calibrationStarted,
-    isRecalibrating,
-  ]);
 
-  /*
-   * Process movement and seals.
-   *
-   * We check every 50ms because
-   * movement can stay the same
-   * for several frames.
-   */
-
-  useEffect(() => {
-    if (showSuccess) {
-      return;
+    /*
+     * Controller already changed
+     * the tutorial step.
+     */
+    if (result.step !== step) {
+      setStep(result.step);
     }
 
-    const interval =
-      window.setInterval(() => {
-        const state =
-          tutorialStateRef.current;
+    /*
+     * Keep seal index synchronized.
+     */
+    if (
+      result.step === "seals"
+    ) {
+      setSealIndex(
+        result.sealIndex
+      );
+    }
 
-        /*
-         * Calibration is handled
-         * separately above.
-         */
+    /*
+     * Tutorial finished.
+     */
+    if (result.tutorialCompleted) {
+      setStep("completed");
 
-        if (
-          state.step === "calibration"
-        ) {
-          return;
-        }
-
-        /*
-         * Tutorial completed.
-         */
-
-        if (
-          state.step === "completed"
-        ) {
-          return;
-        }
-
-        /*
-         * Process current movement
-         * and seal event.
-         */
-
-        const result =
-          processTutorialStep(
-            state,
-            movement,
-            event
-          );
-
-        /*
-         * Update React state.
-
-         * sealIndex is especially important
-         * because all seals share the same
-         * "seals" step.
-         */
-
-        setStep(result.step);
-
-        setSealIndex(
-          result.sealIndex
-        );
-
-        /*
-         * Movement completed.
-         */
-
-        if (
-          result.movementCompleted
-        ) {
-          showCorrect("Correct!");
-        }
-
-        /*
-         * Correct seal completed.
-         */
-
-        if (
-          result.sealCompleted
-        ) {
-          /*
-           * Last seal.
-           */
-
-          if (
-            result.tutorialCompleted
-          ) {
-            showCorrect(
-              "Tutorial completed!"
-            );
-          } else {
-            /*
-             * Move to next seal.
-             */
-
-            showCorrect("Correct!");
-          }
-        }
-      }, 50);
-
-    return () => {
-      window.clearInterval(interval);
-    };
+      setSuccessMessage(
+        "Tutorial completed!"
+      );
+    }
   }, [
     movement,
     event,
-    showSuccess,
+    step,
+    hands,
   ]);
 
   /*
-   * Cleanup success timeout.
+   * Keep sealIndex synchronized with
+   * the tutorial controller.
    */
-
   useEffect(() => {
-    return () => {
-      if (
-        successTimeoutRef.current !== null
-      ) {
-        window.clearTimeout(
-          successTimeoutRef.current
-        );
-      }
-    };
-  }, []);
+    if (step !== "seals") {
+      return;
+    }
+
+    setSealIndex(
+      tutorialStateRef.current.sealIndex
+    );
+  }, [step]);
+
+  /*
+   * Seal advice / debug.
+   *
+   * The tutorial sequence remains strict.
+   *
+   * detectAttemptedSeal() is only used
+   * to understand what the user is
+   * currently trying to make.
+   */
+  useEffect(() => {
+    if (step !== "seals") {
+      setAttemptedSeal(null);
+      setAttemptedScore(null);
+      setAdviceMessage(null);
+
+      adviceStabilizerRef.current =
+        createAdviceStabilizer();
+
+      return;
+    }
+
+    const attempted =
+      detectAttemptedSeal(hands);
+
+    /*
+     * No recognizable seal attempt.
+     */
+    if (!attempted) {
+      setAttemptedSeal(null);
+      setAttemptedScore(null);
+      setAdviceMessage(null);
+
+      adviceStabilizerRef.current =
+        createAdviceStabilizer();
+
+      return;
+    }
+
+    setAttemptedSeal(
+      attempted.seal
+    );
+
+    setAttemptedScore(
+      attempted.score
+    );
+
+    /*
+     * Tutorial still has a strict
+     * expected seal.
+     *
+     * Advice is therefore generated
+     * for the expected seal, not
+     * necessarily the attempted one.
+     */
+    const expectedSeal =
+      getExpectedSeal(
+        tutorialStateRef.current
+      );
+
+    if (!expectedSeal) {
+      return;
+    }
+
+    const advice =
+      getSealAdvice(
+        expectedSeal,
+        hands
+      );
+
+    const stableAdvice =
+      updateAdviceStabilizer(
+        adviceStabilizerRef.current,
+        advice
+      );
+
+    if (stableAdvice) {
+      setAdviceMessage(
+        stableAdvice.message
+      );
+    }
+  }, [
+    hands,
+    step,
+  ]);
 
   /*
    * Current expected seal.
    */
-
   const expectedSeal =
-    getExpectedSeal(
-      tutorialStateRef.current
-    );
-
-  const currentSealInfo =
-    expectedSeal
-      ? SEAL_INFO[expectedSeal]
+    step === "seals"
+      ? getExpectedSeal(
+          tutorialStateRef.current
+        )
       : null;
+
+  /*
+   * Current expected seal image.
+   */
+  const expectedSealImage =
+    expectedSeal
+      ? SEAL_IMAGES[expectedSeal]
+      : null;
+
+  /*
+   * Current expected seal name.
+   */
+  const expectedSealName =
+    expectedSeal
+      ? SEAL_NAMES[expectedSeal]
+      : null;
+
+  /*
+   * Keep React state used for
+   * tutorial progression.
+   *
+   * The actual controller remains
+   * the source of truth.
+   */
+  void sealIndex;
 
   return (
     <div className="tutorial-page">
 
-      {/* CAMERA */}
+      {/* ================================= */}
+      {/* HEADER                            */}
+      {/* ================================= */}
 
-      <div className="tutorial-camera">
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-        />
-      </div>
+      <header className="tutorial-header">
+        <h1>
+          JUTSU TRAINING
+        </h1>
 
-      {/* CONTENT */}
+        <p>
+          Learn to control your chakra
+        </p>
+      </header>
 
-      <div className="tutorial-content">
+      {/* ================================= */}
+      {/* MAIN                              */}
+      {/* ================================= */}
 
-        <h1>Tutorial</h1>
+      <main className="tutorial-content">
 
-        {/* SUCCESS */}
+        {/* ================================= */}
+        {/* CAMERA                            */}
+        {/* ================================= */}
 
-        {showSuccess && (
-          <div className="tutorial-success">
-            <h2>
-              ✓ {successText}
-            </h2>
+        <section className="tutorial-camera-section">
+
+          <div className="tutorial-camera-wrapper">
+
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="tutorial-camera"
+            />
+
+            {!isReady && !error && (
+              <div className="tutorial-camera-message">
+                Starting camera...
+              </div>
+            )}
+
+            {error && (
+              <div className="tutorial-camera-error">
+                {error}
+              </div>
+            )}
+
+            {isRecalibrating && (
+              <div className="tutorial-camera-overlay">
+                Keep your hand still...
+              </div>
+            )}
+
           </div>
-        )}
 
-        {/* CALIBRATION */}
+          {/* ================================= */}
+          {/* DEBUG                              */}
+          {/* ================================= */}
 
-        {!showSuccess &&
-          step === "calibration" && (
-            <>
-              <h2>Calibration</h2>
+          {step === "seals" && (
+            <div className="advice-debug">
 
-              {!calibrationStarted && (
-                <>
-                  <p>
-                    Place your right hand
-                    in the center.
-                  </p>
+              <div className="advice-debug-title">
+                SEAL DEBUG
+              </div>
 
-                  <p>
-                    Keep your hand still
-                    and press the button
-                    below.
-                  </p>
+              <div>
+                Expected:{" "}
+                <strong>
+                  {expectedSealName ??
+                    "NONE"}
+                </strong>
+              </div>
 
-                  <button
-                    onClick={
-                      handleCalibration
-                    }
-                  >
-                    Start calibration
-                  </button>
-                </>
-              )}
+              <div>
+                Attempt:{" "}
+                <strong>
+                  {attemptedSeal
+                    ? attemptedSeal.toUpperCase()
+                    : "NONE"}
+                </strong>
+              </div>
 
-              {calibrationStarted &&
-                isRecalibrating && (
-                  <>
-                    <p>
-                      Keep your right hand
-                      in the center.
-                    </p>
+              <div>
+                Score:{" "}
+                <strong>
+                  {attemptedScore !== null
+                    ? `${Math.round(
+                        attemptedScore * 100
+                      )}%`
+                    : "--"}
+                </strong>
+              </div>
 
-                    <p>
-                      Stay still...
-                    </p>
+              <div>
+                Advice:{" "}
+                <strong>
+                  {adviceMessage ??
+                    "Waiting..."}
+                </strong>
+              </div>
 
-                    <p>
-                      Calibrating...
-                    </p>
-                  </>
-                )}
-            </>
+            </div>
           )}
 
-        {/* LEFT */}
+        </section>
 
-        {!showSuccess &&
-          step === "left" && (
-            <>
-              <h2>Move left</h2>
+        {/* ================================= */}
+        {/* CALIBRATION                        */}
+        {/* ================================= */}
 
-              <p>
-                Move your right hand
-                to the left.
-              </p>
+        {step === "calibration" && (
+          <section className="tutorial-step">
 
-              <p>
-                Detected: {movement}
-              </p>
-            </>
-          )}
+            <h2>
+              CALIBRATION
+            </h2>
 
-        {/* RIGHT */}
+            <p>
+              Place your right hand
+              in the center.
+            </p>
 
-        {!showSuccess &&
-          step === "right" && (
-            <>
-              <h2>Move right</h2>
-
-              <p>
-                Move your right hand
-                to the right.
-              </p>
-
-              <p>
-                Detected: {movement}
-              </p>
-            </>
-          )}
-
-        {/* UP */}
-
-        {!showSuccess &&
-          step === "up" && (
-            <>
-              <h2>Move up</h2>
-
-              <p>
-                Move your right hand up.
-              </p>
-
-              <p>
-                Detected: {movement}
-              </p>
-            </>
-          )}
-
-        {/* DOWN */}
-
-        {!showSuccess &&
-          step === "down" && (
-            <>
-              <h2>Move down</h2>
-
-              <p>
-                Move your right hand down.
-              </p>
-
-              <p>
-                Detected: {movement}
-              </p>
-            </>
-          )}
-
-        {/* SEALS */}
-
-        {!showSuccess &&
-          step === "seals" &&
-          currentSealInfo && (
-            <>
-              <h2>
-                {currentSealInfo.name} seal
-              </h2>
-
-              <p>
-                Make the seal shown below.
-              </p>
-
-              <img
-                src={
-                  currentSealInfo.image
+            {!calibrationStarted && (
+              <button
+                type="button"
+                onClick={
+                  handleStartCalibration
                 }
-                alt={
-                  `${currentSealInfo.name} seal`
-                }
-                className="tutorial-seal-image"
-              />
+                className="tutorial-button"
+              >
+                Start calibration
+              </button>
+            )}
 
-              <p>
-                Show the{" "}
-                {currentSealInfo.name}{" "}
-                seal with both hands.
-              </p>
-
-              {event?.type === "seal" && (
+            {calibrationStarted &&
+              isRecalibrating && (
                 <p>
-                  Detected:{" "}
-                  {event.seal}
+                  Keep your hand still...
                 </p>
               )}
 
+            {calibrationCompleted && (
               <p>
-                Seal {sealIndex + 1} / 4
+                Calibration complete!
               </p>
-            </>
-          )}
+            )}
 
-        {/* COMPLETED */}
+          </section>
+        )}
 
-        {!showSuccess &&
-          step === "completed" && (
-            <>
+        {/* ================================= */}
+        {/* MOVEMENT                           */}
+        {/* ================================= */}
+
+        {step === "left" && (
+          <section className="tutorial-step">
+
+            <h2>
+              MOVE LEFT
+            </h2>
+
+            <p>
+              Move your right hand
+              to the left.
+            </p>
+
+            <p>
+              Detected movement:{" "}
+              <strong>
+                {movement}
+              </strong>
+            </p>
+
+          </section>
+        )}
+
+        {step === "right" && (
+          <section className="tutorial-step">
+
+            <h2>
+              MOVE RIGHT
+            </h2>
+
+            <p>
+              Move your right hand
+              to the right.
+            </p>
+
+            <p>
+              Detected movement:{" "}
+              <strong>
+                {movement}
+              </strong>
+            </p>
+
+          </section>
+        )}
+
+        {step === "up" && (
+          <section className="tutorial-step">
+
+            <h2>
+              MOVE UP
+            </h2>
+
+            <p>
+              Move your right hand
+              upward.
+            </p>
+
+            <p>
+              Detected movement:{" "}
+              <strong>
+                {movement}
+              </strong>
+            </p>
+
+          </section>
+        )}
+
+        {step === "down" && (
+          <section className="tutorial-step">
+
+            <h2>
+              MOVE DOWN
+            </h2>
+
+            <p>
+              Move your right hand
+              downward.
+            </p>
+
+            <p>
+              Detected movement:{" "}
+              <strong>
+                {movement}
+              </strong>
+            </p>
+
+          </section>
+        )}
+
+        {/* ================================= */}
+        {/* SEALS                              */}
+        {/* ================================= */}
+
+        {step === "seals" &&
+          expectedSeal && (
+            <section className="tutorial-step tutorial-seal-step">
+
               <h2>
-                Tutorial completed!
+                FORM THE SEAL
               </h2>
 
               <p>
-                You are ready to play.
+                Make the{" "}
+                <strong>
+                  {expectedSealName}
+                </strong>{" "}
+                seal.
               </p>
-            </>
+
+              {expectedSealImage && (
+                <img
+                  src={expectedSealImage}
+                  alt={`${expectedSealName} seal`}
+                  className="tutorial-seal-image"
+                />
+              )}
+
+              {adviceMessage && (
+                <p className="tutorial-advice">
+                  {adviceMessage}
+                </p>
+              )}
+
+            </section>
           )}
 
-      </div>
+        {/* ================================= */}
+        {/* COMPLETED                          */}
+        {/* ================================= */}
+
+        {step === "completed" && (
+          <section className="tutorial-step tutorial-completed">
+
+            <h2>
+              TRAINING COMPLETE
+            </h2>
+
+            <p>
+              You have learned
+              the basic controls.
+            </p>
+
+            {successMessage && (
+              <p>
+                {successMessage}
+              </p>
+            )}
+
+          </section>
+        )}
+
+      </main>
+
     </div>
   );
 }

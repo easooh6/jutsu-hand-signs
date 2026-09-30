@@ -1,126 +1,299 @@
-# vinext-starter
+# Naruto Hand Sign Game
 
-A clean full-stack starter running on [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and Drizzle support.
+A browser-based game inspired by the anime *Naruto*, where the player uses hand signs to interact with the game.
 
-## Prerequisites
+The project combines a game interface with camera-based hand tracking and Naruto-style hand-sign recognition.
 
-- Node.js `>=22.13.0`
-- Portable: Windows, macOS, or Linux; no Bash required
-- Managed Linux: managed Linux runtime with Bash, `flock`, `curl`, `sha256sum`, and GNU `timeout`
-- Git is required only for publishing
+## Game Concept
 
-## Sites Lifecycle
+The player first chooses a character and then progresses through battles against different enemies.
 
-The Sites initializer copies the shared starter and selects managed-linux only when `SITES_MANAGED_LINUX_CONTAINER=1`; otherwise it selects portable. It saves the selection only in ignored `.sites-runtime/execution-profile.json`. Both profiles copy/configure first, then use the plugin's separate `install-dependencies.mjs` step to measure installation independently. Edit source under `app/` and follow the Sites skill for installation, preview, builds, and publishing.
+Instead of using traditional keyboard controls for attacks, the player performs Naruto hand signs in front of a webcam.
 
-Run `node <plugin-root>/scripts/configure-execution-profile.mjs` only when the profile is unknown for the current checkout and environment. Profile changes do not alter tracked source or require reinstalling otherwise-valid dependencies; restart an existing preview to use the new selection. Do not commit or upload `.sites-runtime/`.
+The general game concept is:
 
-This starter does not use `wrangler.jsonc`.
-
-`install:ci` runs `npm ci` once against the shared lockfile, disables parent-workspace discovery, and includes required dev/optional dependencies despite production/omit settings. Sharp defaults to prebuilt binaries unless explicitly configured otherwise. Do not overlap installers.
-
-- **Portable:** Preserve host HOME, npm cache, registry, proxy, temporary paths, retry/concurrency settings, and lifecycle-script policy. Use `--prefer-offline --no-audit --no-fund`.
-- **Managed Linux:** Use the existing project-local HOME/cache/tmp setup and Linux install lock, tarball preflight, and timeout. Restore the image-seeded npm cache only when its lockfile hash matches; retain network fallback. Builds keep their existing timeout. These helpers are not invoked by the portable profile.
-
-`scripts/sites-env.mjs` preserves the caller's HOME, npm cache, proxy, XDG, and temporary-directory configuration while defaulting Wrangler and Miniflare state to the checkout. If npm reports an unwritable cache, select a writable path with `npm_config_cache` for that install. The `dev` and `start` scripts also keep Wrangler logs inside the checkout. Generated `.sites-runtime/` and `.wrangler/` directories are disposable and ignored by Git.
-
-On portable, `npm run dev` uses `vinext dev` with HMR, starting at port 5173. Vinext records the running server in ignored `.vinext/` state, rejects an ordinary duplicate launch, and recovers stale state after a stopped process; exactly simultaneous starts can race. Pass `--port <port>` or `--hostname <host>` after `npm run dev --` when needed; keep portable previews on loopback.
-
-For browser QA on managed Linux, use `sites-preview start`. The project's dev script runs Vite and accepts the supervisor's `--host 0.0.0.0 --port 4173 --strictPort` arguments. The internal browser uses `http://terminal.local:4173/`; it is not a user-facing URL. The supervisor owns the preview lifecycle. The ignored local profile survives the supervisor's cleared process environment.
-
-The portable profile simulates ChatGPT sign-in only for loopback development requests. Visit `/signin-with-chatgpt?return_to=/` to sign in as `local_seedy` (`seedy@sites.test`, display name `Seedy`) and `/signout-with-chatgpt?return_to=/` to sign out. The development cookie preserves that identity across server restarts. Mock auth is disabled in the managed-linux profile and is not included in production builds; hosted authentication remains dispatch-owned.
-
-The Worker uses `vinext/server/fetch-handler`, including Vinext's config-aware image handling. After building, `npm start` runs that Worker locally through Wrangler on `127.0.0.1`, sharing `.wrangler/state` with dev preview and local D1 migrations; it does not deploy the site or simulate sign-in. Use the URL printed by the server. Pass `npm start -- --port <port>` to select a different built-preview port.
-
-Local previews use Miniflare's placeholder `Request.cf` metadata without a network lookup. Set `CLOUDFLARE_CF_FETCH_ENABLED=true` to opt into fetching preview metadata; this setting does not change hosted request metadata.
-
-Local tool usage metrics are disabled by default. Set `WRANGLER_SEND_METRICS=true` to opt in.
-
-## Included Shape
-
-- edit site code under `app/`
-- `app/chatgpt-auth.ts` provides optional dispatch-owned ChatGPT sign-in helpers
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/index.ts` reads the D1 binding from the Cloudflare Worker environment
-- `db/schema.ts` starts intentionally empty
-- `@cloudflare/workers-types` provides Worker types; `cloudflare-env.d.ts` declares optional `DB`/`BUCKET` bindings—update these declarations if binding names change
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Use it as the durable user key; use email and name for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive `oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty `name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by `oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```text
+Choose a character
+       ↓
+Start the battle
+       ↓
+Enemy appears
+       ↓
+Perform a hand sign
+       ↓
+Hand sign is recognized
+       ↓
+Character performs a jutsu
+       ↓
+Enemy takes damage
+       ↓
+Continue to the next battle
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+The goal is to progress through the battles until the end of the game.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs optional or required ChatGPT sign-in:
+## Features
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use the returned `userId` as the stable user key for user-owned records; do not use email as a durable identifier.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send anonymous visitors through Sign in with ChatGPT.
-- In a Server Component, start sign-in with `<a href={chatGPTSignInPath(returnTo)} target="_top">`. The auth helper module is server-only; do not import it into a Client Component.
-- Do not use `fetch`, XHR, a client-side router, or a framework link that can prefetch the sign-in route. SIWC must start as a top-level navigation.
-- Never request the AuthAPI authorization endpoint directly. The dispatch-owned `/signin-with-chatgpt` route must start the SIWC flow.
-- Use `chatGPTSignOutPath(returnTo)` for browser sign-out links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because they depend on per-request identity headers.
+* Character selection
+* Browser-based game
+* Camera-based hand interaction
+* MediaPipe hand tracking
+* Naruto hand-sign recognition
+* Two-hand gesture recognition
+* Hand-sign based game interaction
+* Battle progression
+* Naruto-inspired gameplay
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the OAuth cookies, and identity header injection. Do not implement app routes for those reserved paths. Routes that do not import and call the helper remain anonymous-compatible.
+## Tech Stack
 
-SIWC establishes identity only; it does not prove workspace membership. Use the Sites hosting platform's access policy controls for workspace-wide restrictions, or enforce explicit server-side membership or allowlist checks.
+* React
+* TypeScript
+* Vite / Vinext
+* MediaPipe
+* Web Camera API
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write actions tied to the current ChatGPT user. Leave public content anonymous.
+## Requirements
 
-## Local D1 migrations
+Before running the project, make sure you have:
 
-For a D1-backed local preview, generate SQL with `npm run db:generate`. Build once through the Sites skill's build entrypoint (or `npm run build` for standalone use) to generate `dist/server/wrangler.json`, rebuilding if bindings change. From the project root, apply each pending migration in order:
+* Node.js `>=22.13.0`
+* npm
+* A working webcam
+* A modern browser
+* Camera permissions enabled
 
-```sh
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_example.sql
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/easooh6/jutsu-hand-signs.git
+cd jutsu-hand-signs
 ```
 
-Replace the filename with the pending migration and `DB` with your D1 binding name if different. Use `.wrangler/state`, not `.wrangler/state/v3`; Wrangler adds the versioned directories. Do not replay migrations already applied locally. This updates only the preview database; publishing applies production migrations separately.
+Switch to the `merge` branch:
 
-## Diagnostic Commands
+```bash
+git checkout merge
+```
 
-- `npm run install:ci`: perform the one locked dependency install
-- `npm run dev`: start the Vite/Vinext development server
-- `npm run build`: build the deployable Sites artifact
-- `npm run start`: preview the built Worker locally with D1/R2 support
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+Install dependencies:
 
-When using the Sites plugin, follow its skill instructions for installation, builds, and publishing. These npm commands remain available for standalone use.
+```bash
+npm install
+```
 
-The portable build runs Vinext directly without a host `timeout` command. The managed-linux build uses `scripts/build-verified.sh` and its existing `SITES_BUILD_TIMEOUT` setting.
+## Run the Game
 
-## Learn More
+Start the development server:
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+```bash
+npm run dev
+```
+
+The terminal will display the local address of the application.
+
+Open that address in your browser.
+
+Usually it will be:
+
+```text
+http://localhost:5173
+```
+
+Allow the browser to access your webcam when requested.
+
+## Playing the Game
+
+### 1. Choose a Character
+
+Start the application and select the character you want to play.
+
+### 2. Allow Camera Access
+
+The game uses the webcam to detect your hands.
+
+When the browser asks for camera permission, select **Allow**.
+
+### 3. Perform Hand Signs
+
+Place your hands in front of the camera and perform the required Naruto hand sign.
+
+The hand-tracking system analyzes the position of your fingers and palms and determines which sign you are making.
+
+### 4. Fight Enemies
+
+Recognized hand signs are used as game input.
+
+The character can perform attacks or jutsu based on the detected sign.
+
+Continue performing the required actions to progress through the battle.
+
+### 5. Continue Through the Game
+
+After defeating an enemy, the player continues to the next stage.
+
+The goal is to progress through all available battles.
+
+## MediaPipe
+
+The game uses MediaPipe Hand Landmarker to detect the player's hands through the webcam.
+
+MediaPipe provides 21 landmarks for each detected hand.
+
+These landmarks are analyzed to determine:
+
+* finger positions;
+* finger states;
+* palm position;
+* palm orientation;
+* distance between hands;
+* relative position of the hands.
+
+The information is then used to recognize Naruto hand signs.
+
+The basic pipeline is:
+
+```text
+Webcam
+   ↓
+MediaPipe
+   ↓
+Hand landmarks
+   ↓
+Hand analysis
+   ↓
+Naruto hand sign
+   ↓
+Game action
+```
+
+## Supported Hand Signs
+
+The hand-sign recognition system currently supports:
+
+```text
+Tiger
+Dog
+Boar
+Horse
+```
+
+The exact sign required depends on the current game or tutorial state.
+
+## Camera Requirements
+
+For the best recognition:
+
+* keep both hands visible;
+* use sufficient lighting;
+* keep your hands within the camera frame;
+* avoid covering one hand with the other;
+* keep a reasonable distance from the camera.
+
+If recognition becomes unstable, move your hands slightly further from the camera and make sure both hands are clearly visible.
+
+## Production Build
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+To preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## Troubleshooting
+
+### Camera does not start
+
+Check that:
+
+1. The browser has camera permission.
+2. No other application is currently using the webcam.
+3. The correct camera is selected.
+4. The page has been reloaded after granting permission.
+
+### Hand signs are not recognized
+
+Try:
+
+* improving the lighting;
+* moving closer or further from the camera;
+* keeping both hands completely visible;
+* making the hand sign more clearly;
+* keeping the hands stable for a short moment.
+
+### The development server does not start
+
+Try reinstalling dependencies:
+
+```bash
+rm -rf node_modules
+npm install
+```
+
+Then run:
+
+```bash
+npm run dev
+```
+
+## Branches
+
+The project contains two important branches.
+
+### `dev`
+
+Contains the main hand-tracking and computer-vision implementation.
+
+It includes:
+
+* MediaPipe integration;
+* hand tracking;
+* movement detection;
+* hand-sign recognition;
+* tutorial;
+* advice system.
+
+To run it:
+
+```bash
+git checkout dev
+npm install
+npm run dev
+```
+
+### `merge`
+
+Contains the game version of the project.
+
+It connects the hand-interaction concept with the game experience.
+
+To run it:
+
+```bash
+git checkout merge
+npm install
+npm run dev
+```
+
+## Project Status
+
+The MediaPipe-based hand-tracking and hand-sign recognition component was successfully implemented.
+
+The original project was intended to connect this system with the complete game.
+
+During development, one of the project participants became unavailable, so the complete integration could not be finished as originally planned.
+
+However, the main computer-vision component was implemented and can be tested independently through the `dev` branch.
+
+The `merge` branch contains the available game implementation.
+
+## License
+
+This project was created as an educational project.
